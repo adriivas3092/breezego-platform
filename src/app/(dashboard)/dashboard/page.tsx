@@ -15,7 +15,8 @@ export default function DashboardPage() {
   
   const clientFullName = user?.fullName || "Cliente BreezeGo";
   const fullNameToDisplay = `BEZG ${clientFullName.replace(/^(?:BRG|BEZG|BZG)\s+/i, "").trim()}`;
-  
+  const firstName = clientFullName.replace(/^(?:BRG|BEZG|BZG)\s+/i, "").trim().split(" ")[0] || "Cliente";
+
   const [packages, setPackages] = useState<Package[]>([]);
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [transactions, setTransactions] = useState<TilopayTransaction[]>([]);
@@ -319,8 +320,7 @@ export default function DashboardPage() {
           setCurrentUser(activeSessionUser || user);
         }
       } else {
-        const currUser = await mockAuth.getCurrentUser();
-        setCurrentUser(currUser);
+        setCurrentUser(null);
       }
     } catch (err) {
       console.error("Error fetching dashboard data", err);
