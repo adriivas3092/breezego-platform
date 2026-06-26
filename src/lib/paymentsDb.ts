@@ -17,6 +17,7 @@ export interface PaymentRow {
   currency: string;
   status: string;
   tilopay_transaction_id: string | null;
+  customer_email: string | null;
   created_at?: string;
   paid_at?: string | null;
 }
@@ -28,6 +29,7 @@ export async function createPayment(p: {
   amount: number;
   currency?: string;
   status?: string;
+  customerEmail?: string;
 }): Promise<boolean> {
   const db = admin();
   if (!db) return false;
@@ -38,6 +40,7 @@ export async function createPayment(p: {
     amount: p.amount,
     currency: p.currency || "USD",
     status: p.status || "pending",
+    customer_email: p.customerEmail || null,
   });
   return !error;
 }

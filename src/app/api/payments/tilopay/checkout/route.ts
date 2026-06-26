@@ -70,8 +70,13 @@ export async function POST(request: Request) {
 
     const amountUsd = Number(invoice.total_cost_usd);
 
+    // Datos de facturación del cliente desde su perfil (email se guarda para validar el OrderHash de retorno)
+    const { data: profile } = await supabaseClient
+      .from("profiles").select("full_name, last_name, phone, address, email").eq("id", userId).single();
+    const billingEmail = profile?.email || user.email || "cliente@breezego.net";
+
     // 6. Registrar el pago en el ledger persistente (estado pendiente)
-    await createPayment({ orderNumber: txId, userId, invoiceId, amount: amountUsd, currency: "USD", status: "pending" });
+    await createPayment({ orderNumber: txId, userId, invoiceId, amount: amountUsd, currency: "USD", status: "pending", customerEmail: billingEmail });
 
     logger.info("Iniciando checkout de pago", {
       ip, userAgent, userId,
@@ -83,17 +88,13 @@ export async function POST(request: Request) {
     if (isTilopayConfigured()) {
       const tlToken = await tilopayLogin();
       if (tlToken) {
-        // Datos de facturación del cliente desde su perfil
-        const { data: profile } = await supabaseClient
-          .from("profiles").select("full_name, last_name, phone, address, email").eq("id", userId).single();
-
         const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://breezego.net";
         const result = await tilopayProcessPayment({
           token: tlToken,
           amount: amountUsd,
           currency: "USD",
           orderNumber: txId,
-          redirect: `${siteUrl}/dashboard?orderId=${txId}`,
+          redirect: `${siteUrl}/payments/tilopay-return`,
           billing: {
             firstName: (profile?.full_name || "Cliente").replace(/^BEZG\s+/i, "").trim() || "Cliente",
             lastName: profile?.last_name || "BreezeGo",
@@ -103,7 +104,7 @@ export async function POST(request: Request) {
             zip: "10101",
             country: "CR",
             phone: profile?.phone || "00000000",
-            email: profile?.email || user.email || "cliente@breezego.net",
+            email: billingEmail,
           },
         });
 
