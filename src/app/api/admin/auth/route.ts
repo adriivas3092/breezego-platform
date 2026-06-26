@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { createAdminToken } from "@/lib/adminAuth";
 
 export async function POST(req: Request) {
   try {
@@ -10,9 +11,9 @@ export async function POST(req: Request) {
 
     const masterPassword = process.env.ADMIN_PASSWORD;
 
-    if (password === masterPassword) {
-      // Return success. In a real-world system, we would generate a session token or cookie.
-      return NextResponse.json({ success: true });
+    if (masterPassword && password === masterPassword) {
+      // Emitir un token de sesión firmado con expiración (ver lib/adminAuth)
+      return NextResponse.json({ success: true, token: createAdminToken() });
     }
 
     return NextResponse.json({ success: false, error: "Contraseña incorrecta." }, { status: 401 });

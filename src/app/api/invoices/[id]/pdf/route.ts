@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { verifyAdminAuth } from "@/lib/adminAuth";
 import { createClient } from "@supabase/supabase-js";
 import { generateInvoicePdf } from "@/lib/invoiceHelper";
 import { logger } from "@/lib/logger";
@@ -18,8 +19,7 @@ export async function GET(
     let isAdmin = false;
 
     // Check if admin passcode is provided
-    const masterPassword = process.env.ADMIN_PASSWORD;
-    if (passcode === masterPassword) {
+    if (passcode && verifyAdminAuth(passcode)) {
       isAdmin = true;
     } else {
       // Authenticate via search param, Authorization header, or cookies

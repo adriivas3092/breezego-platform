@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
+import { verifyAdminAuth } from "@/lib/adminAuth";
 import { createClient } from "@supabase/supabase-js";
 import nodemailer from "nodemailer";
 
 export async function POST(req: Request) {
   try {
     const passcode = req.headers.get("x-admin-passcode");
-    const masterPassword = process.env.ADMIN_PASSWORD;
-    if (passcode !== masterPassword) {
+    if (!verifyAdminAuth(passcode || "")) {
       return NextResponse.json({ success: false, error: "No autorizado." }, { status: 401 });
     }
 

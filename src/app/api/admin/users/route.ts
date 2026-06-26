@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { verifyAdminAuth } from "@/lib/adminAuth";
 import { createClient } from "@supabase/supabase-js";
 import { logger } from "@/lib/logger";
 
@@ -12,9 +13,7 @@ export async function GET(req: Request) {
     // 1. Verificar autorización del administrador
     const authHeader = req.headers.get("Authorization");
     const passcode = authHeader?.replace("Bearer ", "") || "";
-    const masterPassword = process.env.ADMIN_PASSWORD;
-
-    if (passcode !== masterPassword) {
+    if (!verifyAdminAuth(passcode)) {
       logger.warn("Intento de acceso no autorizado a la API de administración de usuarios", { ip, userAgent });
       return NextResponse.json({ success: false, error: "No autorizado." }, { status: 401 });
     }
@@ -159,9 +158,7 @@ export async function POST(req: Request) {
   try {
     const authHeader = req.headers.get("Authorization");
     const passcode = authHeader?.replace("Bearer ", "") || "";
-    const masterPassword = process.env.ADMIN_PASSWORD;
-
-    if (passcode !== masterPassword) {
+    if (!verifyAdminAuth(passcode)) {
       return NextResponse.json({ success: false, error: "No autorizado." }, { status: 401 });
     }
 
@@ -319,9 +316,7 @@ export async function PUT(req: Request) {
   try {
     const authHeader = req.headers.get("Authorization");
     const passcode = authHeader?.replace("Bearer ", "") || "";
-    const masterPassword = process.env.ADMIN_PASSWORD;
-
-    if (passcode !== masterPassword) {
+    if (!verifyAdminAuth(passcode)) {
       return NextResponse.json({ success: false, error: "No autorizado." }, { status: 401 });
     }
 
@@ -422,9 +417,7 @@ export async function DELETE(req: Request) {
     // 1. Verificar autorización del administrador
     const authHeader = req.headers.get("Authorization");
     const passcode = authHeader?.replace("Bearer ", "") || "";
-    const masterPassword = process.env.ADMIN_PASSWORD;
-
-    if (passcode !== masterPassword) {
+    if (!verifyAdminAuth(passcode)) {
       return NextResponse.json({ success: false, error: "No autorizado." }, { status: 401 });
     }
 

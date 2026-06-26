@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { verifyAdminAuth } from "@/lib/adminAuth";
 import { createClient } from "@supabase/supabase-js";
 import { logger } from "@/lib/logger";
 
@@ -12,9 +13,7 @@ export async function GET(req: Request) {
     const headerPasscode = authHeader?.replace("Bearer ", "") || "";
     
     const passcode = headerPasscode || queryPasscode;
-    const masterPassword = process.env.ADMIN_PASSWORD;
-
-    if (passcode !== masterPassword) {
+    if (!verifyAdminAuth(passcode)) {
       logger.warn("Intento de acceso no autorizado a la API de migración de suites", { passcode });
       return NextResponse.json({ success: false, error: "No autorizado." }, { status: 401 });
     }

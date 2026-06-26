@@ -189,7 +189,8 @@ export default function IndependentAdminPage() {
       if (res.ok && data.success) {
         setIsAuthorized(true);
         sessionStorage.setItem("breezego_admin_authorized", "true");
-        sessionStorage.setItem("breezego_admin_passcode", passwordInput);
+        // Guardamos el token de sesión firmado (con expiración) en vez de la contraseña
+        sessionStorage.setItem("breezego_admin_passcode", data.token || passwordInput);
         setAuthError("");
         fetchData();
       } else {
