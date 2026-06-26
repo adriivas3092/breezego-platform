@@ -116,7 +116,46 @@ export async function checkRateLimit(
     }
   }
 
-  // 2. Fallback Local en Memoria RAM
+  // 2. Persistencia en Postgres (Supabase) vía RPC con service role.
+  // Es consistente entre instancias serverless, a diferencia del Map en memoria.
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (supabaseUrl && serviceRoleKey && serviceRoleKey !== 'undefined') {
+    try {
+      const resp = await fetch(`${supabaseUrl.replace(/\/$/, '')}/rest/v1/rpc/check_rate_limit`, {
+        method: 'POST',
+        headers: {
+          apikey: serviceRoleKey,
+          Authorization: `Bearer ${serviceRoleKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ p_key: cacheKey, p_limit: limit, p_window: windowSeconds }),
+      });
+      if (!resp.ok) throw new Error(`Supabase RPC retornó status ${resp.status}`);
+      const rows = await resp.json();
+      const row = Array.isArray(rows) ? rows[0] : rows;
+      if (row) {
+        const success = !!row.allowed;
+        if (!success) {
+          logger.warn('Rate limit excedido (Postgres)', {
+            ip: key,
+            metadata: { limit, remaining: row.remaining, reset: row.reset_seconds },
+          });
+        }
+        return {
+          success,
+          limit,
+          remaining: Number(row.remaining ?? 0),
+          reset: Number(row.reset_seconds ?? Math.floor(Date.now() / 1000) + windowSeconds),
+        };
+      }
+    } catch (error) {
+      logger.error('Error en Rate Limit Postgres, cayendo en fallback local', error);
+      // Continúa al fallback en memoria
+    }
+  }
+
+  // 3. Fallback Local en Memoria RAM (último recurso)
   const now = Math.floor(Date.now() / 1000);
   let record = localCache.get(cacheKey);
 
