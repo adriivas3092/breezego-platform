@@ -70,18 +70,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               document.cookie = `bz_auth_session=${session.access_token};path=/;max-age=3600;samesite=lax`;
             }
           } else {
-            // Check if there is a local fallback session stored
-            const activeSessionStr = localStorage.getItem("bz_supabase_db_user");
-            if (activeSessionStr) {
-              try {
-                const activeSessionUser = JSON.parse(activeSessionStr);
-                setUser(activeSessionUser);
-              } catch (e) {
-                setUser(null);
-              }
-            } else {
-              setUser(null);
-            }
+            // Sin sesión válida de Supabase => sesión cerrada (no se restaura desde caché local).
+            setUser(null);
           }
           return;
         }
@@ -176,31 +166,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             } catch (e) {}
             return;
           } else {
-            // Local fallback logic
-            const usersList = JSON.parse(localStorage.getItem("bz_supabase_db_users_list") || "[]");
-            const localMatched = usersList.find((u: any) => u.email.toLowerCase() === email.toLowerCase());
-            
-            if (localMatched) {
-              console.log("Supabase login failure. Fallback to local ledger active.");
-              setUser(localMatched);
-              localStorage.setItem("bz_supabase_db_user", JSON.stringify(localMatched));
-              return;
-            }
+            // Sin fallback inseguro: las credenciales se validan únicamente contra Supabase.
             const errObj = new Error(resData?.error || "Error al iniciar sesión.");
             (errObj as any).showCaptcha = !!resData?.showCaptcha;
             throw errObj;
           }
         } catch (fetchErr: any) {
-          // Network error or offline fallback logic
-          const usersList = JSON.parse(localStorage.getItem("bz_supabase_db_users_list") || "[]");
-          const localMatched = usersList.find((u: any) => u.email.toLowerCase() === email.toLowerCase());
-          
-          if (localMatched) {
-            console.log("Supabase connection offline. Fallback to local ledger active.");
-            setUser(localMatched);
-            localStorage.setItem("bz_supabase_db_user", JSON.stringify(localMatched));
-            return;
-          }
+          // Si Supabase no responde, se propaga el error (no se concede acceso desde caché local).
           throw fetchErr;
         }
       }
