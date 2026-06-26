@@ -168,12 +168,12 @@ export async function middleware(request: NextRequest) {
                            pathname.startsWith('/notifications') ||
                            pathname.startsWith('/admin');
 
-  /*
-  if (isProtectedRoute && !sessionToken) {
+  // Las rutas /admin tienen su propio gate de contraseña en el cliente, por eso
+  // se excluyen aquí (de lo contrario el administrador sería redirigido a /login).
+  if (isProtectedRoute && !pathname.startsWith('/admin') && !sessionToken) {
     // Redirigir a login si el usuario no tiene sesión activa
     return NextResponse.redirect(new URL('/login', request.url));
   }
-  */
 
   // Agregar headers útiles
   const response = NextResponse.next();

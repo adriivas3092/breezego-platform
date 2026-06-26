@@ -213,7 +213,7 @@ export default function IndependentAdminPage() {
     if (!silent) setLoading(true);
     try {
       // Fetch packages (real sync from Supabase database)
-      const adminPasscode = sessionStorage.getItem("breezego_admin_passcode") || "BreezeGoMaster2026";
+      const adminPasscode = sessionStorage.getItem("breezego_admin_passcode") || "";
       let activePkgs: Package[] = [];
       let activeInvs: Invoice[] = [];
       
@@ -374,7 +374,7 @@ export default function IndependentAdminPage() {
     
     setSaving(true);
     try {
-      const adminPasscode = sessionStorage.getItem("breezego_admin_passcode") || "BreezeGoMaster2026";
+      const adminPasscode = sessionStorage.getItem("breezego_admin_passcode") || "";
       const resUpdate = await fetch("/api/admin/packages", {
         method: "POST",
         headers: {
@@ -454,7 +454,7 @@ export default function IndependentAdminPage() {
     
     setSaving(true);
     try {
-      const adminPasscode = sessionStorage.getItem("breezego_admin_passcode") || "BreezeGoMaster2026";
+      const adminPasscode = sessionStorage.getItem("breezego_admin_passcode") || "";
       const res = await fetch(`/api/admin/packages?id=${packageId}`, {
         method: "DELETE",
         headers: {
@@ -478,7 +478,7 @@ export default function IndependentAdminPage() {
   const handleSyncAcs = async () => {
     setIsSyncing(true);
     try {
-      const adminPasscode = sessionStorage.getItem("breezego_admin_passcode") || "BreezeGoMaster2026";
+      const adminPasscode = sessionStorage.getItem("breezego_admin_passcode") || "";
       const res = await fetch("/api/admin/packages/sync", {
         method: "POST",
         headers: {
@@ -512,7 +512,7 @@ export default function IndependentAdminPage() {
     
     setIsRegisteringPkg(true);
     try {
-      const adminPasscode = sessionStorage.getItem("breezego_admin_passcode") || "BreezeGoMaster2026";
+      const adminPasscode = sessionStorage.getItem("breezego_admin_passcode") || "";
       const resRegister = await fetch("/api/admin/packages", {
         method: "POST",
         headers: {
@@ -625,7 +625,7 @@ export default function IndependentAdminPage() {
     setSaving(true);
     try {
       if (isRealSupabaseActive) {
-        const passcode = sessionStorage.getItem("breezego_admin_passcode") || "BreezeGoMaster2026";
+        const passcode = sessionStorage.getItem("breezego_admin_passcode") || "";
         const res = await fetch("/api/admin/users", {
           method: "PUT",
           headers: {
@@ -677,7 +677,7 @@ export default function IndependentAdminPage() {
     setSaving(true);
     try {
       // 1. Delete from Supabase Database and Auth via API
-      const passcode = sessionStorage.getItem("breezego_admin_passcode") || "BreezeGoMaster2026";
+      const passcode = sessionStorage.getItem("breezego_admin_passcode") || "";
       const res = await fetch(`/api/admin/users?id=${userId}`, {
         method: "DELETE",
         headers: {
@@ -728,7 +728,7 @@ export default function IndependentAdminPage() {
       let serverSuiteCode = finalSuiteCode;
 
       if (isRealSupabaseActive) {
-        const passcode = sessionStorage.getItem("breezego_admin_passcode") || "BreezeGoMaster2026";
+        const passcode = sessionStorage.getItem("breezego_admin_passcode") || "";
         const res = await fetch("/api/admin/users", {
           method: "POST",
           headers: {

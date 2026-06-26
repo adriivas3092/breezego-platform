@@ -18,7 +18,7 @@ export async function GET(
     let isAdmin = false;
 
     // Check if admin passcode is provided
-    const masterPassword = process.env.ADMIN_PASSWORD || "BreezeGoMaster2026";
+    const masterPassword = process.env.ADMIN_PASSWORD;
     if (passcode === masterPassword) {
       isAdmin = true;
     } else {

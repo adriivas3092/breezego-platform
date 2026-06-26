@@ -41,7 +41,7 @@ function ShippingLabelContent() {
         let userData: User | null = null;
 
         if (isRealSupabaseActive) {
-          const adminPasscode = sessionStorage.getItem("breezego_admin_passcode") || "BreezeGoMaster2026";
+          const adminPasscode = sessionStorage.getItem("breezego_admin_passcode") || "";
           const res = await fetch(`/api/admin/packages?id=${id}`, {
             method: "GET",
             headers: {

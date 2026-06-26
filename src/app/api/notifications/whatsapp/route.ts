@@ -5,7 +5,7 @@ import nodemailer from "nodemailer";
 export async function POST(req: Request) {
   try {
     const passcode = req.headers.get("x-admin-passcode");
-    const masterPassword = process.env.ADMIN_PASSWORD || "BreezeGoMaster2026";
+    const masterPassword = process.env.ADMIN_PASSWORD;
     if (passcode !== masterPassword) {
       return NextResponse.json({ success: false, error: "No autorizado." }, { status: 401 });
     }

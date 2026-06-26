@@ -55,3 +55,6 @@ update_users.sql
 # editor
 .idea
 .vscode
+
+.vercel
+.env*

@@ -8,7 +8,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: false, error: "Contraseña requerida." }, { status: 400 });
     }
 
-    const masterPassword = process.env.ADMIN_PASSWORD || "BreezeGoMaster2026";
+    const masterPassword = process.env.ADMIN_PASSWORD;
 
     if (password === masterPassword) {
       // Return success. In a real-world system, we would generate a session token or cookie.

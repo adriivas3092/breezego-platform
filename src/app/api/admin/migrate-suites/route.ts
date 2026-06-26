@@ -12,7 +12,7 @@ export async function GET(req: Request) {
     const headerPasscode = authHeader?.replace("Bearer ", "") || "";
     
     const passcode = headerPasscode || queryPasscode;
-    const masterPassword = process.env.ADMIN_PASSWORD || "BreezeGoMaster2026";
+    const masterPassword = process.env.ADMIN_PASSWORD;
 
     if (passcode !== masterPassword) {
       logger.warn("Intento de acceso no autorizado a la API de migración de suites", { passcode });
