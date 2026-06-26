@@ -1,0 +1,760 @@
+/*
+ * BreezeGo Premium Product Specification Stylesheet
+ * Designed with a high-fidelity startup dark mode (inspired by Notion and Linear).
+ */
+
+:root {
+    --brand-cyan: #46C7D2;
+    --brand-teal: #0C8096;
+    --brand-navy: #1D2A3E;
+    --brand-navy-dark: #0f172a;
+    --brand-orange: #FC7C58;
+    --brand-white: #FFFFFF;
+
+    --bg-dark: #0b0f19;
+    --card-dark: rgba(29, 42, 62, 0.65);
+    --border-dark: rgba(255, 255, 255, 0.06);
+    
+    --font-heading: 'Montserrat', sans-serif;
+    --font-body: 'Inter', sans-serif;
+}
+
+body.product-theme-dark {
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-dark);
+    color: #f8fafc;
+    font-family: var(--font-body);
+    overflow: hidden;
+    height: 100vh;
+}
+
+/* 1. LAYOUT STRUCTURE */
+.product-layout {
+    display: flex;
+    height: 100vh;
+    width: 100%;
+}
+
+.product-sidebar {
+    width: 280px;
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(15px);
+    border-right: 1px solid var(--border-dark);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    padding: 24px;
+}
+
+.product-sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 28px;
+}
+
+.product-brand-logo {
+    height: 32px;
+    max-width: 120px;
+    object-fit: contain;
+}
+
+.product-badge {
+    background: rgba(252, 124, 88, 0.15);
+    color: var(--brand-orange);
+    font-family: var(--font-heading);
+    font-size: 0.62rem;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+}
+
+/* Notion-style Table of Contents */
+.product-toc {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.toc-title {
+    font-family: var(--font-heading);
+    font-size: 0.65rem;
+    font-weight: 800;
+    color: #64748b;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    padding-left: 10px;
+}
+
+.toc-link {
+    color: #94a3b8;
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-decoration: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    border-left: 2px solid transparent;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.toc-link:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.toc-link.active {
+    color: var(--brand-cyan);
+    background: rgba(70, 199, 210, 0.06);
+    border-left-color: var(--brand-cyan);
+    font-weight: 600;
+}
+
+.footer-back-link {
+    display: block;
+    color: #94a3b8;
+    font-family: var(--font-heading);
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: color 0.2s;
+    text-align: center;
+    padding-top: 16px;
+    border-top: 1px solid var(--border-dark);
+}
+
+.footer-back-link:hover {
+    color: var(--brand-cyan);
+}
+
+/* 2. SCROLLABLE CONTENT BODY */
+.product-main-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 48px 48px 80px 48px;
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+    position: relative;
+}
+
+.product-portal-header {
+    position: relative;
+    padding-bottom: 40px;
+    border-bottom: 1px solid var(--border-dark);
+    margin-bottom: 48px;
+}
+
+.header-glow-orb {
+    position: absolute;
+    top: -60px;
+    left: -40px;
+    width: 250px;
+    height: 150px;
+    background: radial-gradient(circle, rgba(70, 199, 210, 0.12) 0%, rgba(70, 199, 210, 0) 70%);
+    pointer-events: none;
+}
+
+.portal-tag {
+    background: rgba(70, 199, 210, 0.15);
+    color: var(--brand-cyan);
+    font-family: var(--font-heading);
+    font-size: 0.65rem;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 4px;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+}
+
+.portal-title {
+    font-family: var(--font-heading);
+    font-size: 2.1rem;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: -1px;
+    margin: 16px 0 8px 0;
+}
+
+.portal-subtitle {
+    font-size: 0.95rem;
+    color: #cbd5e1;
+    line-height: 1.5;
+    max-width: 720px;
+    margin: 0;
+}
+
+/* Common spec section styling */
+.spec-section {
+    margin-bottom: 60px;
+}
+
+.section-title {
+    font-family: var(--font-heading);
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: -0.5px;
+    margin: 0 0 24px 0;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.section-paragraph {
+    font-size: 0.88rem;
+    line-height: 1.6;
+    color: #cbd5e1;
+    margin: 0 0 20px 0;
+}
+
+.spec-card {
+    background: var(--card-dark);
+    border: 1px solid var(--border-dark);
+    border-radius: 20px;
+    padding: 28px;
+    backdrop-filter: blur(10px);
+}
+
+/* 3. SECTION VISUAL WRAPPER STYLES */
+
+/* Section 1: Props Grid */
+.props-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 24px;
+}
+
+.prop-card {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border-dark);
+    border-radius: 12px;
+    padding: 20px;
+}
+
+.prop-icon {
+    font-size: 1.6rem;
+    display: block;
+    margin-bottom: 12px;
+}
+
+.prop-title {
+    font-family: var(--font-heading);
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0 0 6px 0;
+}
+
+.prop-text {
+    font-size: 0.75rem;
+    color: #cbd5e1;
+    line-height: 1.4;
+    margin: 0;
+}
+
+/* Section 2: Roles comparative cards */
+.roles-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+
+.role-card {
+    border: 1px solid var(--border-dark);
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.role-card.client { background: rgba(70, 199, 210, 0.02); border-color: rgba(70, 199, 210, 0.1); }
+.role-card.operator { background: rgba(252, 124, 88, 0.02); border-color: rgba(252, 124, 88, 0.1); }
+.role-card.support { background: rgba(139, 92, 246, 0.02); border-color: rgba(139, 92, 246, 0.1); }
+.role-card.admin { background: rgba(255, 255, 255, 0.02); border-color: rgba(255, 255, 255, 0.06); }
+
+.role-title {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: #ffffff;
+    margin: 0;
+}
+
+.role-bullets {
+    margin: 0;
+    padding-left: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.role-bullets li {
+    font-size: 0.78rem;
+    color: #cbd5e1;
+    line-height: 1.3;
+}
+
+/* Section 3: Feature Rows list */
+.feature-rows-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.fe-row-item {
+    background: rgba(255,255,255,0.01);
+    border: 1px solid var(--border-dark);
+    border-radius: 12px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.fe-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 220px;
+    flex-shrink: 0;
+}
+
+.fe-num {
+    font-family: var(--font-heading);
+    font-size: 0.8rem;
+    font-weight: 800;
+    color: var(--brand-cyan);
+}
+
+.fe-name {
+    font-family: var(--font-heading);
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0;
+}
+
+.fe-desc {
+    font-size: 0.78rem;
+    color: #cbd5e1;
+    line-height: 1.45;
+    margin: 0;
+}
+
+/* Section 4: Dashboard Logic boxes */
+.logic-box {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--border-dark);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
+}
+
+.logic-box:last-child {
+    margin-bottom: 0;
+}
+
+.logic-box-title {
+    font-family: var(--font-heading);
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--brand-cyan);
+    margin: 0 0 6px 0;
+}
+
+.logic-box-desc {
+    font-size: 0.78rem;
+    color: #cbd5e1;
+    line-height: 1.4;
+    margin: 0;
+}
+
+/* Section 5: Tracking Logic flow timeline */
+.tracking-logic-flow {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.track-step {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    background: rgba(255,255,255,0.01);
+    border: 1px dashed var(--border-dark);
+    border-radius: 12px;
+    padding: 14px;
+}
+
+.step-badge {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--brand-cyan);
+    color: var(--brand-navy-dark);
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: 0.7rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.step-info {
+    font-size: 0.78rem;
+    color: #cbd5e1;
+    line-height: 1.45;
+}
+
+.step-info strong {
+    color: #ffffff;
+}
+
+/* Section 6: Mailbox logic */
+.mailbox-template-box {
+    background: rgba(11, 17, 26, 0.5);
+    border: 1px solid var(--border-dark);
+    border-radius: 12px;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-family: monospace;
+    font-size: 0.8rem;
+}
+
+.tpl-row {
+    display: flex;
+}
+
+.tpl-lbl {
+    color: #94a3b8;
+    width: 140px;
+    flex-shrink: 0;
+}
+
+.tpl-val {
+    color: #ffffff;
+}
+
+/* Section 7: Pre-alert horizontal flow chart */
+.prealert-diagram {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    overflow-x: auto;
+    padding: 10px 0;
+    gap: 10px;
+}
+
+.dia-node {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border-dark);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    text-align: center;
+    min-width: 120px;
+}
+
+.dia-icon {
+    font-size: 1.4rem;
+}
+
+.dia-node span:last-child {
+    font-size: 0.7rem;
+    color: #cbd5e1;
+    line-height: 1.3;
+}
+
+.dia-arrow {
+    color: var(--brand-cyan);
+    font-size: 1.2rem;
+}
+
+/* Section 8: Notification logs */
+.notifications-template-card {
+    background: #090d16;
+    border: 1px solid var(--border-dark);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.notif-header {
+    background: rgba(255,255,255,0.02);
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.notif-bell {
+    font-size: 1rem;
+    animation: bzRing 2s infinite alternate;
+}
+
+@keyframes bzRing {
+    0% { transform: rotate(0); }
+    20% { transform: rotate(15deg); }
+    40% { transform: rotate(-15deg); }
+    60% { transform: rotate(10deg); }
+    80% { transform: rotate(-10deg); }
+    100% { transform: rotate(0); }
+}
+
+.notif-title {
+    font-family: var(--font-heading);
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0;
+}
+
+.json-code {
+    margin: 0;
+    padding: 16px;
+    font-family: monospace;
+    font-size: 0.78rem;
+    line-height: 1.4;
+    color: #38bdf8;
+    overflow-x: auto;
+}
+
+/* Section 9: Database summary */
+.db-blueprint-summary {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+.db-entity-mini {
+    background: rgba(255,255,255,0.01);
+    border: 1px solid var(--border-dark);
+    border-radius: 8px;
+    padding: 12px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.db-entity-mini strong {
+    font-family: monospace;
+    color: var(--brand-cyan);
+    font-size: 0.8rem;
+}
+
+.db-entity-mini span {
+    font-size: 0.68rem;
+    color: #cbd5e1;
+    line-height: 1.3;
+}
+
+/* Section 10: Security RLS code tags */
+.security-rules-box {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.rule-item {
+    background: rgba(11, 17, 26, 0.4);
+    border: 1px solid var(--border-dark);
+    border-radius: 10px;
+    padding: 14px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    overflow-x: auto;
+}
+
+.rule-tag {
+    font-family: var(--font-heading);
+    font-size: 0.6rem;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 4px;
+    letter-spacing: 0.5px;
+    flex-shrink: 0;
+}
+
+.rule-tag.read { background: rgba(70, 199, 210, 0.15); color: var(--brand-cyan); }
+.rule-tag.write { background: rgba(252, 124, 88, 0.15); color: var(--brand-orange); }
+
+.rule-item code {
+    font-family: monospace;
+    font-size: 0.72rem;
+    color: #a78bfa;
+}
+
+/* Section 11: Frontend blocks */
+.fe-architecture-blocks {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+.block-item {
+    background: rgba(255,255,255,0.01);
+    border: 1px solid var(--border-dark);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.block-item strong {
+    font-family: var(--font-heading);
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.block-item span {
+    font-size: 0.68rem;
+    color: #cbd5e1;
+    line-height: 1.45;
+}
+
+/* Section 12: Backend stack */
+.be-stack-cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+}
+
+.stack-card {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border-dark);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    text-align: center;
+}
+
+.tech-icon {
+    font-size: 1.5rem;
+}
+
+.stack-card strong {
+    font-family: var(--font-heading);
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.stack-card p {
+    font-size: 0.68rem;
+    color: #cbd5e1;
+    line-height: 1.3;
+    margin: 0;
+}
+
+/* Section 13: Roadmap sprint boxes */
+.roadmap-sprints {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.sprint-box {
+    background: rgba(255,255,255,0.01);
+    border: 1px solid var(--border-dark);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    position: relative;
+    padding-left: 100px;
+}
+
+.sprint-num {
+    position: absolute;
+    left: 16px;
+    top: 16px;
+    background: rgba(252, 124, 88, 0.15);
+    color: var(--brand-orange);
+    font-family: var(--font-heading);
+    font-size: 0.62rem;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 4px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.sprint-box strong {
+    font-family: var(--font-heading);
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.sprint-box p {
+    font-size: 0.72rem;
+    color: #cbd5e1;
+    line-height: 1.4;
+    margin: 0;
+}
+
+@media (max-width: 900px) {
+    .product-layout {
+        flex-direction: column;
+        overflow-y: auto;
+        height: auto;
+    }
+
+    .product-sidebar {
+        width: 100%;
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid var(--border-dark);
+    }
+
+    .product-toc {
+        flex-direction: row;
+        overflow-x: auto;
+        padding-bottom: 10px;
+    }
+
+    .toc-link {
+        padding: 6px 12px;
+        font-size: 0.75rem;
+    }
+
+    .product-main-content {
+        padding: 24px;
+    }
+
+    .props-grid, .roles-grid, .db-blueprint-summary, .fe-architecture-blocks, .be-stack-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .prealert-diagram {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .dia-arrow {
+        transform: rotate(90deg);
+    }
+}

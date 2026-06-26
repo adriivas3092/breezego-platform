@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BreezeGo - Arquitectura de Sistema & Base de Datos</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="architecture.css">
+</head>
+<body class="dev-theme-dark">
+
+    <!-- DEV DASHBOARD MAIN CONTAINER -->
+    <div class="dev-console-layout">
+        
+        <!-- SIDEBAR NAVIGATION -->
+        <aside class="dev-sidebar">
+            <div class="dev-sidebar-header">
+                <a href="index.html" class="dev-logo-link">
+                    <img src="logo.png" alt="BreezeGo Logo" class="dev-brand-logo">
+                </a>
+                <span class="dev-env-badge">Dev Console</span>
+            </div>
+            
+            <div class="dev-project-meta">
+                <div class="meta-label">PROYECTO</div>
+                <div class="meta-value">BreezeGo SaaS v1.2</div>
+                <div class="meta-status">
+                    <span class="status-indicator-dot online"></span>
+                    <span class="status-lbl">Database: Online (Vercel + Supabase)</span>
+                </div>
+            </div>
+
+            <!-- INTERACTIVE TAB PILLS -->
+            <nav class="dev-nav">
+                <button class="dev-nav-btn active" data-tab="database">
+                    <span class="nav-icon">📊</span>
+                    <span>Plano Base de Datos</span>
+                </button>
+                <button class="dev-nav-btn" data-tab="roles">
+                    <span class="nav-icon">🔐</span>
+                    <span>Roles y Permisos</span>
+                </button>
+                <button class="dev-nav-btn" data-tab="rls">
+                    <span class="nav-icon">🛡️</span>
+                    <span>Row Level Security (RLS)</span>
+                </button>
+                <button class="dev-nav-btn" data-tab="tracking">
+                    <span class="nav-icon">🚚</span>
+                    <span>Lógica de Rastreo</span>
+                </button>
+                <button class="dev-nav-btn" data-tab="frontend">
+                    <span class="nav-icon">🎨</span>
+                    <span>Arquitectura Frontend</span>
+                </button>
+                <button class="dev-nav-btn" data-tab="stack">
+                    <span class="nav-icon">🚀</span>
+                    <span>Infraestructura Cloud</span>
+                </button>
+            </nav>
+
+            <div class="dev-sidebar-footer">
+                <a href="dashboard.html" class="sidebar-back-btn">← Volver al Dashboard</a>
+            </div>
+        </aside>
+
+        <!-- CORE CONTENT AREA -->
+        <main class="dev-main-content">
+            
+            <!-- HEADER -->
+            <header class="dev-header">
+                <div class="dev-header-left">
+                    <h1 class="dev-header-title" id="dev-active-tab-title">Plano Base de Datos</h1>
+                    <p class="dev-header-desc" id="dev-active-tab-desc">Esquemas de tablas relacionales, llaves primarias/foráneas y tipos de columnas.</p>
+                </div>
+                <div class="dev-header-right">
+                    <!-- Search bar dynamically filters DB schemas in DB tab, disabled in others -->
+                    <div class="dev-search-bar" id="db-search-box">
+                        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                        <input type="text" id="dev-schema-search" placeholder="Filtrar esquemas o campos...">
+                    </div>
+                </div>
+            </header>
+
+            <!-- VIEWPORT SCROLL CONTAINER -->
+            <div class="dev-viewport">
+
+                <!-- 1. DATABASE BLUEPRINT TAB -->
+                <div class="dev-tab-panel active" id="panel-database">
+                    <div class="db-schema-grid">
+                        
+                        <!-- Table 1: profiles -->
+                        <div class="db-table-card" data-table="profiles">
+                            <div class="db-card-header">
+                                <span class="table-tag">TABLA</span>
+                                <h3 class="table-name">profiles</h3>
+                            </div>
+                            <p class="table-desc">Información extendida de usuario y casillero SJO.</p>
+                            <div class="db-card-columns">
+                                <div class="col-row pkey">
+                                    <span class="col-name">id</span>
+                                    <span class="col-type">UUID [PK, FK -> auth.users.id]</span>
+                                </div>
+                                <div class="col-row">
+                                    <span class="col-name">first_name</span>
+                                    <span class="col-type">VARCHAR(100)</span>
+                                </div>
+                                <div class="col-row">
+                                    <span class="col-name">last_name</span>
+                                    <span class="col-type">VARCHAR(100)</span>
+                                </div>
+                                <div class="col-row">
+                                    <span class="col-name">id_card_type</span>
+                                    <span class="col-type">VARCHAR(20)</span>
+                                </div>
+                                <div class="col-row">
+                                    <span class="col-name">id_card_num</span>
+                                    <span class="col-type">VARCHAR(50) [UNIQUE]</span>
+                                </div>
+                                <div class="col-row">
+                                    <span class="col-name">phone_number</span>
+                                    <span class="col-type">VARCHAR(30)</span>
+                                </div>
+                                <div class="col-row">
+                                    <span class="col-name">suite_code</span>
+                                    <span class="col-type">VARCHAR(30) [UNIQUE]</span>
+                                </div>
+                                <div class="col-row">
+                                    <span class="col-name">delivery_address</span>
+                                    <span class="col-type">TEXT</span>
+                                </div>
+                                <div class="col-row">
+                                    <span class="col-name">delivery_district</span>
+                                    <span class="col-type">VARCHAR(100)</span>
+                                </div>
+                                <div class="col-row">
+                                    <span class="col-name">delivery_class</span>
+                                    <span class="col-type">VARCHAR(20) [gam/rural]</span>
+                                </div>
+                                <div class="col-row">
+                                    <span class="col-name">freight_preference</span>
+                                    <span class="col-type">VARCHAR(20) [aerial/maritime]</span>
+                                </div>
+                                <div class="col-row">
+                                    <span class="col-name">created_at</span>
+                                    <span class="col-type">TIMESTAMP WITH TIME ZONE</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Table 2: packages -->
+                        <div class="db-table-card" data-table="packages">
+                            <div class="db-card-header">
+                                <span class="table-tag">TABLA</span>
+                                <h3 class="table-name">packages</h3>
+                            </div>
+                            <p class="table-desc">Cargos importados en Miami y tránsito a aduanas.</p>
+                            <div class="db-card-columns">
+                                <div class="col-row pkey">
+                                    <span class="col-name">id</span>
+                                    <span class="col-type">UUID [PK]</span>
+                                </div>
+                                <div class="col-row">
+                                    <span class="col-name">tracking_number</span>
+                                    <span class="col-type">VARCHAR(100) [UNIQUE]</span>
+                                </div>
+                                <div class="col-row">
+                                    <span class="col-name">breeze_code</span>
+                                    <span class="col-type">VARCHAR(30) [UNIQUE]</span>
+                                </div>
+                                <div class="col-row fkey">
+                                    <span class="col-name">user_id</span>
+                                    <span class="col-type">UUID [FK -> auth.users.id]</span>
+                                </div>
+                                <div class="col-row">
+                                    <span class="col-name">description</span>
+                                    <span class="col-type">TEXT</span>
+                                </div>
+                                <div class="col-row">
+                                    <span class="col-name">vendor</span>
+                                    <span class="col-type">VARCHAR(100)</span>
+                                </div>
+                                <div class="col-row">
+                                    <span class="col-name">weight_lbs</span>
+                                    <span class="col-type">DECIMAL(10,2)</span>
+                                </div>
+                                <div class="col-row">
+                                    <span class="col-name">volume_height</span>
+                                    <span class="col-type">DECIMAL(10,2)</span>
+                                </div>
+                                <div class="col-row">
+                                    <span class="col-name">volume_width</span>
+                                    <span class="col-type">DECIMAL(10,2)</span>
+                                </div>
+                                <div class="col-row">
+                                    <span class="col-name">volume_length</span>
+                                    <span class="col-type">DECIMAL(10,2)</span>
+                                </div>
+                                <div class="col-row">
+                                    <span class="col-name">fob_value_usd</span>
+                                    <span class="col-type">DECIMAL(10,2)</span>
+                                </div>
+                                <div class="col-row">
+                                    <span class="col-name">tax_category</span>
+                                    <span class="col-type">VARCHAR(50)</span>
+                                </div>
+                                <div class="col-row">
+                                    <span class="col-name">status</span>
+                                    <span class="col-type">VARCHAR(30)</span>
+                                </div>
+                                <div class="col-row">
+                                    <span class="col-name">created_at</span>
+                                    <span class="col-type">TIMESTAMP WITH TIME ZONE</span>
+                                </div>
+                                <div class="col-row">
+                                    <span class="col-name">updated_at</span>
+                                    <span class="col-type">TIMESTAMP WITH TIME ZONE</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Table 3: tracking_events -->
+                        <div class="db-table-card" data-table="tracking_events">
+                            <div class="db-card-header">
+                                <span class="table-tag">TABLA</span>
+                                <h3 class="table-name">tracking_events</h3>
+                            </div>
+                            <p class="table-desc">Historial cronológico e hitos satelitales GPS.</p>
+                            <div class="db-card-columns">
+                                <div class="col-row pkey">
+                                    <span class="col-name">id</span>
+                                    <span class="col-type">UUID [PK]</span>
+                                </div>
+                                <div class="col-row fkey">
+                                    <span class="col-name">package_id</span>
+                                    <span class="col-type">UUID [FK -> packages.id]</span>
+                                </div>
+                                <div class="col-row">
+                                    <span class="col-name">status</span>
+                                    <span class="col-type">VARCHAR(30)</span>
+                                </div>
+                                <div class="col-row">
+                                    <span class="col-name">message</span>
+                                    <span class="col-type">TEXT</span>
+                                </div>
+                                <div class="col-row">
+                                    <span class="col-name">latitude</span>
+                                    <span class="col-type">DECIMAL(10,8)</span>
+                                </div>
+                                <div class="col-row">
+                                    <span class="col-name">longitude</span>
+                                    <span class="col-type">DECIMAL(11,8)</span>
+                                </div>
+                                <div class="col-row">
+                                    <span class="col-name">driver_name</span>
+                                    <span class="col-type">VARCHAR(100)</span>
+                                </div>
+                                <div class="col-row">
+                                    <span class="col-name">driver_phone</span>
+                                    <span class="col-type">VARCHAR(30)</span>
+                                </div>
+                                <div class="col-row">
+                                    <span class="col-name">created_at</span>
+                                    <span class="col-type">TIMESTAMP WITH TIME ZONE</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Table 4: pre_alerts -->
+                        <div class="db-table-card" data-table="pre_alerts">
+                            <div class="db-card-header">
+                                <span class="table-tag">TABLA</span>
+                                <h3 class="table-name">pre_alerts</h3>
+                            </div>
+                            <p class="table-desc">Prealertas y facturas de compras registradas.</p>
+                            <div class="db-card-columns">
+                                <div class="col-row pkey">
+                                    <span class="col-name">id</span>
+                                    <span class="col-type">UUID [PK]</span>
+                                </div>
+                                <div class="col-row fkey">
+                                    <span class="col-name">user_id</span>
+                                    <span class="col-type">UUID [FK -> auth.users.id]</span>
+                                </div>
+                                <div class="col-row">
+                                    <span class="col-name">tracking_number</span>
+                                    <span class="col-type">VARCHAR(100)</span>
+                                </div>
+                                <div class="col-row">
+                                    <span class="col-name">vendor</span>
+                                    <span class="col-type">VARCHAR(100)</span>
+                                </div>
+                                <div class="col-row">
+                                    <span class="col-name">fob_value_usd</span>
+                                    <span class="col-type">DECIMAL(10,2)</span>
+                                </div>
+                                <div class="col-row">
+                                    <span class="col-name">invoice_url</span>
+                                    <span class="col-type">TEXT [Supabase Bucket URL]</span>
+                                </div>
+                                <div class="col-row">
+                                    <span class="col-name">created_at</span>
+                                    <span class="col-type">TIMESTAMP WITH TIME ZONE</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Table 5: invoices -->
+                        <div class="db-table-card" data-table="invoices">
+                            <div class="db-card-header">
+                                <span class="table-tag">TABLA</span>
+                                <h3 class="table-name">invoices</h3>
+                            </div>
+                            <p class="table-desc">Fletes, impuestos arancelarios e importes CIF.</p>
+                            <div class="db-card-columns">
+                                <div class="col-row pkey">
+                                    <span class="col-name">id</span>
+                                    <span class="col-type">UUID [PK]</span>
+                                </div>
+                                <div class="col-row fkey">
+                                    <span class="col-name">package_id</span>
+                                    <span class="col-type">UUID [FK -> packages.id, UNIQUE]</span>
+                                </div>
+                                <div class="col-row">
+                                    <span class="col-name">flete_cost_usd</span>
+                                    <span class="col-type">DECIMAL(10,2)</span>
+                                </div>
+                                <div class="col-row">
+                                    <span class="col-name">taxes_cost_usd</span>
+                                    <span class="col-type">DECIMAL(10,2)</span>
+                                </div>
+                                <div class="col-row">
+                                    <span class="col-name">insurance_usd</span>
+                                    <span class="col-type">DECIMAL(10,2)</span>
+                                </div>
+                                <div class="col-row">
+                                    <span class="col-name">total_cost_usd</span>
+                                    <span class="col-type">DECIMAL(10,2)</span>
+                                </div>
+                                <div class="col-row">
+                                    <span class="col-name">total_cost_crc</span>
+                                    <span class="col-type">DECIMAL(12,2) [515 exchange rate]</span>
+                                </div>
+                                <div class="col-row">
+                                    <span class="col-name">is_paid</span>
+                                    <span class="col-type">BOOLEAN [DEFAULT false]</span>
+                                </div>
+                                <div class="col-row">
+                                    <span class="col-name">payment_method</span>
+                                    <span class="col-type">VARCHAR(30) [sinpe/card]</span>
+                                </div>
+                                <div class="col-row">
+                                    <span class="col-name">paid_at</span>
+                                    <span class="col-type">TIMESTAMP WITH TIME ZONE</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Table 6: notifications -->
+                        <div class="db-table-card" data-table="notifications">
+                            <div class="db-card-header">
+                                <span class="table-tag">TABLA</span>
+                                <h3 class="table-name">notifications</h3>
+                            </div>
+                            <p class="table-desc">Registro interno de notificaciones y alertas de usuario.</p>
+                            <div class="db-card-columns">
+                                <div class="col-row pkey">
+                                    <span class="col-name">id</span>
+                                    <span class="col-type">UUID [PK]</span>
+                                </div>
+                                <div class="col-row fkey">
+                                    <span class="col-name">user_id</span>
+                                    <span class="col-type">UUID [FK -> auth.users.id]</span>
+                                </div>
+                                <div class="col-row">
+                                    <span class="col-name">title</span>
+                                    <span class="col-type">VARCHAR(150)</span>
+                                </div>
+                                <div class="col-row">
+                                    <span class="col-name">message</span>
+                                    <span class="col-type">TEXT</span>
+                                </div>
+                                <div class="col-row">
+                                    <span class="col-name">is_read</span>
+                                    <span class="col-type">BOOLEAN [DEFAULT false]</span>
+                                </div>
+                                <div class="col-row">
+                                    <span class="col-name">created_at</span>
+                                    <span class="col-type">TIMESTAMP WITH TIME ZONE</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Table 7: support_tickets -->
+                        <div class="db-table-card" data-table="support_tickets">
+                            <div class="db-card-header">
+                                <span class="table-tag">TABLA</span>
+                                <h3 class="table-name">support_tickets</h3>
+                            </div>
+                            <p class="table-desc">Gestión interna de helpdesk y reclamos de aduana.</p>
+                            <div class="db-card-columns">
+                                <div class="col-row pkey">
+                                    <span class="col-name">id</span>
+                                    <span class="col-type">UUID [PK]</span>
+                                </div>
+                                <div class="col-row fkey">
+                                    <span class="col-name">user_id</span>
+                                    <span class="col-type">UUID [FK -> auth.users.id]</span>
+                                </div>
+                                <div class="col-row">
+                                    <span class="col-name">subject</span>
+                                    <span class="col-type">VARCHAR(200)</span>
+                                </div>
+                                <div class="col-row">
+                                    <span class="col-name">description</span>
+                                    <span class="col-type">TEXT</span>
+                                </div>
+                                <div class="col-row">
+                                    <span class="col-name">status</span>
+                                    <span class="col-type">VARCHAR(30) [open/closed/solved]</span>
+                                </div>
+                                <div class="col-row">
+                                    <span class="col-name">priority</span>
+                                    <span class="col-type">VARCHAR(20) [low/medium/high]</span>
+                                </div>
+                                <div class="col-row">
+                                    <span class="col-name">created_at</span>
+                                    <span class="col-type">TIMESTAMP WITH TIME ZONE</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- 2. ROLES & PERMISSIONS TAB -->
+                <div class="dev-tab-panel" id="panel-roles">
+                    <div class="roles-layout">
+                        
+                        <!-- Role Selector Pills -->
+                        <div class="role-selector-bar">
+                            <button class="role-pill-btn active" data-role="client">Cliente</button>
+                            <button class="role-pill-btn" data-role="operator">Operador Logístico</button>
+                            <button class="role-pill-btn" data-role="support">Agente de Soporte</button>
+                            <button class="role-pill-btn" data-role="admin">Administrador</button>
+                        </div>
+
+                        <!-- Grid visual mapping of permissions -->
+                        <div class="permission-mapping-card">
+                            <div class="perm-card-header">
+                                <h3 class="perm-card-title" id="perm-role-title">PERMISOS: Cliente</h3>
+                                <p class="perm-card-desc" id="perm-role-desc">Acciones y recursos asignados al rol seleccionado en la base de datos.</p>
+                            </div>
+                            
+                            <div class="perm-list-grid" id="perm-checkboxes-container">
+                                <!-- Populated dynamically by architecture.js -->
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- 3. RLS POLICIES TAB (Interactive simulation) -->
+                <div class="dev-tab-panel" id="panel-rls">
+                    <div class="rls-layout">
+                        
+                        <div class="rls-description-block">
+                            <p>PostgreSQL **Row Level Security (RLS)** restringe las lecturas y escrituras de filas directamente en la capa de datos según el JWT del usuario autenticado, evitando cualquier manipulación del cliente en consola.</p>
+                        </div>
+
+                        <div class="rls-sim-grid">
+                            
+                            <!-- Policy Selector list -->
+                            <div class="rls-policies-list">
+                                <h4 class="rls-sub-heading">Políticas RLS Activas</h4>
+                                <div class="policy-card selected" data-policy="profiles_select">
+                                    <span class="policy-method select">SELECT</span>
+                                    <div class="policy-meta">
+                                        <h5 class="policy-name">Lectura de Perfiles</h5>
+                                        <code class="policy-code">auth.uid() = id</code>
+                                    </div>
+                                </div>
+                                <div class="policy-card" data-policy="packages_select">
+                                    <span class="policy-method select">SELECT</span>
+                                    <div class="policy-meta">
+                                        <h5 class="policy-name">Lectura de Paquetes</h5>
+                                        <code class="policy-code">auth.uid() = user_id</code>
+                                    </div>
+                                </div>
+                                <div class="policy-card" data-policy="invoices_select">
+                                    <span class="policy-method select">SELECT</span>
+                                    <div class="policy-meta">
+                                        <h5 class="policy-name">Lectura de Invoices</h5>
+                                        <code class="policy-code">exists (packages match uid)</code>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Interactive RLS Sandbox simulator -->
+                            <div class="rls-sandbox-card">
+                                <div class="sandbox-header">
+                                    <h4 class="sandbox-title">⚡ Simulador Sandbox RLS</h4>
+                                    <span class="sandbox-badge">Postgres Auth Engine</span>
+                                </div>
+                                
+                                <div class="sandbox-inputs">
+                                    <div class="form-group">
+                                        <label class="sandbox-label">ID de Usuario Autenticado (auth.uid)</label>
+                                        <select class="sandbox-select" id="sim-auth-uid">
+                                            <option value="user_juan">Juan Perez (Cliente #1 - UUID: juan-9081)</option>
+                                            <option value="user_maria">Maria Gomez (Cliente #2 - UUID: maria-4001)</option>
+                                            <option value="user_operator">Eduardo (Operador - UUID: operator-1111)</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="sandbox-label">Recurso a Consultar (Row owner_id)</label>
+                                        <select class="sandbox-select" id="sim-resource-owner">
+                                            <option value="user_juan">Fila de Juan Perez (Flete BZ-506-SJO)</option>
+                                            <option value="user_maria">Fila de Maria Gomez (Flete BZ-CR-9999)</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <button class="btn btn-primary" id="btn-run-rls-sim" style="width:100%;">Evaluar Política RLS</button>
+
+                                <!-- Interactive output logs console -->
+                                <div class="sandbox-console-logs">
+                                    <div class="logs-header">
+                                        <span>CONSOLA POSTGRESQL LOGS</span>
+                                        <span class="logs-dot green"></span>
+                                    </div>
+                                    <div class="logs-terminal" id="sim-terminal-logs">
+                                        <div class="log-line system">-- Postgres RLS Sandbox listo. Selecciona credenciales y evalúa.</div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- 4. TRACKING LOGIC STATE MACHINE TAB -->
+                <div class="dev-tab-panel" id="panel-tracking">
+                    <div class="tracking-logic-layout">
+                        
+                        <!-- State Transitions Timeline Nodes -->
+                        <div class="tracking-nodes-timeline">
+                            <div class="track-node active" data-state="prealerted">
+                                <span class="node-icon">⚡</span>
+                                <span class="node-name">Prealertado</span>
+                            </div>
+                            <div class="track-node" data-state="miami">
+                                <span class="node-icon">📦</span>
+                                <span class="node-name">Listo en Miami</span>
+                            </div>
+                            <div class="track-node" data-state="transit">
+                                <span class="node-icon">✈️</span>
+                                <span class="node-name">En Tránsito</span>
+                            </div>
+                            <div class="track-node" data-state="customs">
+                                <span class="node-icon">🛡️</span>
+                                <span class="node-name">Aduana CR</span>
+                            </div>
+                            <div class="track-node" data-state="delivery">
+                                <span class="node-icon">🚚</span>
+                                <span class="node-name">En Reparto</span>
+                            </div>
+                            <div class="track-node" data-state="delivered">
+                                <span class="node-icon">✓</span>
+                                <span class="node-name">Entregado</span>
+                            </div>
+                        </div>
+
+                        <!-- Active State visual card detail -->
+                        <div class="state-detail-card">
+                            <div class="state-detail-header">
+                                <span class="state-tag" id="active-state-tag">ESTADO ACTUAL</span>
+                                <h3 class="state-title" id="active-state-title">Prealertado</h3>
+                            </div>
+                            
+                            <div class="state-specs-grid">
+                                <div class="spec-box">
+                                    <div class="spec-label">ACCIONES TRIGGER EN BASE DE DATOS</div>
+                                    <p class="spec-value" id="active-state-triggers">Inserta fila en <code>pre_alerts</code> y crea registro inicial en <code>packages</code> con status <code>'prealerted'</code>. El peso se inicializa en <code>0.00 lbs</code>.</p>
+                                </div>
+                                <div class="spec-box">
+                                    <div class="spec-label">CÁLCULO LOGÍSTICO / ARITMÉTICO</div>
+                                    <p class="spec-value" id="active-state-calculations">No hay cálculos tarifarios. Se lee el archivo Invoice (PDF/Imagen) y se almacena en el bucket de Supabase para pre-clasificación.</p>
+                                </div>
+                                <div class="spec-box">
+                                    <div class="spec-label">FLUJO LOGÍSTICO SIGUIENTE</div>
+                                    <p class="spec-value" id="active-state-next">El paquete debe ser recibido físicamente en nuestras bodegas de Florida para actualizar su peso y pasar al estado <strong>Listo en Miami</strong>.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- 5. FRONTEND MODULAR VIEW TAB -->
+                <div class="dev-tab-panel" id="panel-frontend">
+                    <div class="frontend-layout">
+                        
+                        <div class="fe-card-grid">
+                            
+                            <!-- Card 1: dashboard -->
+                            <div class="fe-module-card">
+                                <div class="fe-card-header">
+                                    <span class="fe-tag">MÓDULO</span>
+                                    <h3 class="fe-module-name">dashboard.html</h3>
+                                </div>
+                                <p class="fe-module-desc">Command center principal del usuario. Estilo oscuro Linear.</p>
+                                <div class="fe-card-components">
+                                    <div class="fe-comp-item">⚡ Stat Widget Grid (Packages state count)</div>
+                                    <div class="fe-comp-item">⚡ Physical Address Template Clipboard (Stripe style)</div>
+                                    <div class="fe-comp-item">⚡ Modal Form: Upload Commercial Invoice pre-alert</div>
+                                </div>
+                            </div>
+
+                            <!-- Card 2: tracker -->
+                            <div class="fe-module-card">
+                                <div class="fe-card-header">
+                                    <span class="fe-tag">MÓDULO</span>
+                                    <h3 class="fe-module-name">tracker.html</h3>
+                                </div>
+                                <p class="fe-module-desc">Visualizador interactivo de fletes satelitales en tiempo real.</p>
+                                <div class="fe-card-components">
+                                    <div class="fe-comp-item">🚚 Interactive SVG road map coordinates path animation</div>
+                                    <div class="fe-comp-item">🚚 Dynamic Speedometer & GPS coordinate auto-ticker</div>
+                                    <div class="fe-comp-item">🚚 Eduardo driver interactive live messaging popup</div>
+                                </div>
+                            </div>
+
+                            <!-- Card 3: calculator -->
+                            <div class="fe-module-card">
+                                <div class="fe-card-header">
+                                    <span class="fe-tag">MÓDULO</span>
+                                    <h3 class="fe-module-name">calculator.html</h3>
+                                </div>
+                                <p class="fe-module-desc">Simulador fiscal CIF y flete arancelario de Hacienda.</p>
+                                <div class="fe-card-components">
+                                    <div class="fe-comp-item">🧮 Volumetric standards checker (L*W*H)/166</div>
+                                    <div class="fe-comp-item">🧮 Costa Rica aranceles ratio filters (tech, cosm, general)</div>
+                                    <div class="fe-comp-item">🧮 515 CRC Colones direct conversion card</div>
+                                </div>
+                            </div>
+
+                            <!-- Card 4: onboarding signup -->
+                            <div class="fe-module-card">
+                                <div class="fe-card-header">
+                                    <span class="fe-tag">MÓDULO</span>
+                                    <h3 class="fe-module-name">signup.html</h3>
+                                </div>
+                                <p class="fe-module-desc">Registro onboarding secuencial multipaso inspirado en Stripe.</p>
+                                <div class="fe-card-components">
+                                    <div class="fe-comp-item">🔑 Step 2: 4-digit focus SMS OTP security grid</div>
+                                    <div class="fe-comp-item">🔑 Step 4: Miami physical flete address generation & copy</div>
+                                    <div class="fe-comp-item">🔑 Step 5: Welcome slideshow interactive tutorial carousel</div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- 6. CLOUD ARCHITECTURE STACK TAB -->
+                <div class="dev-tab-panel" id="panel-stack">
+                    <div class="stack-layout">
+                        
+                        <!-- Premium Tech Stack visual block connections -->
+                        <div class="stack-visual-board">
+                            
+                            <!-- Frontend Vercel node -->
+                            <div class="stack-node-card front">
+                                <div class="stack-node-header">
+                                    <span class="stack-icon">🎨</span>
+                                    <h4 class="stack-node-title">FRONTEND HOSTING</h4>
+                                </div>
+                                <span class="stack-node-tech">Vercel Edge Cloud</span>
+                                <p class="stack-node-desc">Distribuye estáticos HTML5, CSS3 y JS a nivel global en milisegundos.</p>
+                                <div class="stack-node-bullets">
+                                    <span>✓ Next.js Pages</span>
+                                    <span>✓ Tailwind Utility Base</span>
+                                    <span>✓ shadcn/ui components</span>
+                                </div>
+                            </div>
+
+                            <div class="stack-connector">
+                                <div class="arrow-line"></div>
+                                <div class="arrow-head">➔</div>
+                                <span class="arrow-lbl">GraphQL / REST</span>
+                            </div>
+
+                            <!-- Supabase APIs Gateway node -->
+                            <div class="stack-node-card back">
+                                <div class="stack-node-header">
+                                    <span class="stack-icon">⚡</span>
+                                    <h4 class="stack-node-title">BACKEND BAAS</h4>
+                                </div>
+                                <span class="stack-node-tech">Supabase Cluster</span>
+                                <p class="stack-node-desc">Provee autenticación segura, base de datos relacional y storage buckets.</p>
+                                <div class="stack-node-bullets">
+                                    <span>✓ GoTrue JWT Auth</span>
+                                    <span>✓ S3 Storage Invoices</span>
+                                    <span>✓ Websocket Realtime</span>
+                                </div>
+                            </div>
+
+                            <div class="stack-connector">
+                                <div class="arrow-line"></div>
+                                <div class="arrow-head">➔</div>
+                                <span class="arrow-lbl">PostgreSQL</span>
+                            </div>
+
+                            <!-- Database server PostgreSQL node -->
+                            <div class="stack-node-card database">
+                                <div class="stack-node-header">
+                                    <span class="stack-icon">💾</span>
+                                    <h4 class="stack-node-title">CORE DATABASE</h4>
+                                </div>
+                                <span class="stack-node-tech">PostgreSQL Engine</span>
+                                <p class="stack-node-desc">Servidor transaccional relacional con soporte nativo de Row Level Security (RLS).</p>
+                                <div class="stack-node-bullets">
+                                    <span>✓ Relational Tables</span>
+                                    <span>✓ RLS Access Controls</span>
+                                    <span>✓ Column Check Constraints</span>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+        </main>
+
+    </div>
+
+    <!-- Script files -->
+    <script src="architecture.js"></script>
+    <script src="cookie-consent.js"></script>
+    <!-- Smart Help Assistant -->
+    <script src="help-assistant.js"></script>
+</body>
+</html>

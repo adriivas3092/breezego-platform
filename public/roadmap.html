@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BreezeGo - Roadmap de Producto & MVP</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="roadmap.css">
+</head>
+<body class="roadmap-theme-dark">
+
+    <!-- DEV PRODUCT ROADMAP LAYOUT -->
+    <div class="roadmap-layout">
+        
+        <!-- SIDEBAR INDEX TABLE OF CONTENTS (Linear-style) -->
+        <aside class="roadmap-sidebar">
+            <div class="roadmap-sidebar-header">
+                <a href="index.html" class="roadmap-logo-link">
+                    <img src="logo.png" alt="BreezeGo Logo" class="roadmap-brand-logo">
+                </a>
+                <span class="roadmap-badge">Roadmap Spec</span>
+            </div>
+            
+            <nav class="roadmap-toc" id="roadmap-sidebar-toc">
+                <div class="toc-title">PLANEACIÓN & MVP</div>
+                <a href="#mvpscope" class="toc-link active">1. Alcance de MVP</a>
+                <a href="#phases" class="toc-link">2. Fases de Lanzamiento</a>
+                <a href="#kanban" class="toc-link">3. Kanban de Sprints</a>
+                <a href="#priorities" class="toc-link">4. Prioridades de Criterio</a>
+                <a href="#tech" class="toc-link">5. Roadmap Técnico</a>
+                <a href="#prep" class="toc-link">6. Preparación de Cierre</a>
+                <a href="#future" class="toc-link">7. Sprints Futuros</a>
+            </nav>
+            
+            <div class="roadmap-sidebar-footer">
+                <a href="frontend.html" class="footer-back-link">💻 Ir a Frontend Spec ➔</a>
+            </div>
+        </aside>
+
+        <!-- MAIN SCROLLABLE ROADMAP PLAN SHEET -->
+        <main class="roadmap-main-content" id="roadmap-scroll-container">
+            
+            <!-- PORTAL WELCOME HEADER -->
+            <header class="roadmap-portal-header">
+                <div class="header-glow-orb"></div>
+                <span class="portal-tag">BreezeGo SaaS Roadmap</span>
+                <h1 class="portal-title">Mapa de Ruta de Producto & MVP</h1>
+                <p class="portal-subtitle">Gestión e ingeniería de fases, sprints secuenciales interactivos, tableros de prioridad y QA del despliegue.</p>
+            </header>
+
+            <!-- SECTION 1: MVP SCOPE -->
+            <section id="mvpscope" class="spec-section">
+                <h2 class="section-title">1. Alcance del MVP</h2>
+                <div class="spec-card">
+                    <p class="section-paragraph">El MVP de BreezeGo está diseñado para lanzar una suite transaccional de forwarding Miami-SJO ágil y funcional en el menor tiempo. Incluye 10 componentes clave:</p>
+                    <div class="mvp-grid">
+                        <div class="mvp-card-item done">
+                            <span class="mvp-item-status">✓ Listo</span>
+                            <strong>🔑 Onboarding Wizard (signup)</strong>
+                            <p>Multi-step OTP focus grid y suite Miami generation.</p>
+                        </div>
+                        <div class="mvp-card-item done">
+                            <span class="mvp-item-status">✓ Listo</span>
+                            <strong>🔑 Login Portal (login)</strong>
+                            <p>Acceso JWT y reseteo por hCaptcha.</p>
+                        </div>
+                        <div class="mvp-card-item done">
+                            <span class="mvp-item-status">✓ Listo</span>
+                            <strong>🎛️ Command Center (dashboard)</strong>
+                            <p>Copy card template, counter badges y notificaciones.</p>
+                        </div>
+                        <div class="mvp-card-item done">
+                            <span class="mvp-item-status">✓ Listo</span>
+                            <strong>🚚 Tracker GPS (tracking)</strong>
+                            <p>Interactive map coordinate ticker y driver messaging.</p>
+                        </div>
+                        <div class="mvp-card-item done">
+                            <span class="mvp-item-status">✓ Listo</span>
+                            <strong>🧮 Cotizador Aéreo (calculator)</strong>
+                            <p>Volumetric pricing, Hacienda taxes y CRC converter.</p>
+                        </div>
+                        <div class="mvp-card-item done">
+                            <span class="mvp-item-status">✓ Listo</span>
+                            <strong>⚡ Pre-Alert Invoice (prealerts)</strong>
+                            <p> PDF invoice drag-drop uploader y localStorage logic sync.</p>
+                        </div>
+                        <div class="mvp-card-item done">
+                            <span class="mvp-item-status">✓ Listo</span>
+                            <strong>🙋‍♂️ Help center (help)</strong>
+                            <p>Floating FAB widget, grids categorizados y buscador live.</p>
+                        </div>
+                        <div class="mvp-card-item done">
+                            <span class="mvp-item-status">✓ Listo</span>
+                            <strong>📱 Capsule Navigation</strong>
+                            <p>Grid responsivo que despliega bottom capsule nav en móvil.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 2: PRODUCT PHASES -->
+            <section id="phases" class="spec-section">
+                <h2 class="section-title">2. Fases de Desarrollo</h2>
+                <div class="spec-card">
+                    <p class="section-paragraph">Planificamos la escala estructural del SaaS en tres fases incrementales para asegurar estabilidad y control:</p>
+                    <div class="phases-timeline">
+                        <div class="phase-node active">
+                            <div class="phase-badge">Fase 1</div>
+                            <h4 class="phase-name">Client MVP Core</h4>
+                            <p class="phase-desc">Lanzamiento del onboarding multipaso, cotizador arancelario y rastreador en vivo satelital para clientes.</p>
+                        </div>
+                        <div class="phase-node active">
+                            <div class="phase-badge">Fase 2</div>
+                            <h4 class="phase-name">Operations Consolidation</h4>
+                            <p class="phase-desc">Lanzamiento del Customs Operator Desk (admin.html), consola de base de datos (architecture.html) y syncing de fletes.</p>
+                        </div>
+                        <div class="phase-node">
+                            <div class="phase-badge">Fase 3</div>
+                            <h4 class="phase-name">Automation & Scale</h4>
+                            <p class="phase-desc">Pasarela de validación automática SINPE/BAC, cálculo óptimo de rutas de choferes por IA, y mobile scanners.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 3: INTERACTIVE KANBAN BOARD -->
+            <section id="kanban" class="spec-section">
+                <h2 class="section-title">3. Kanban de Sprints</h2>
+                <div class="spec-card">
+                    <p class="section-paragraph">Jira/Linear Sprint Board. Haz clic en las tarjetas de tareas para examinar desgloses técnicos y dependencias en la terminal de logs inferior:</p>
+                    
+                    <div class="kanban-board">
+                        
+                        <!-- Col 1: Todo -->
+                        <div class="kanban-col">
+                            <h3 class="col-title">TO DO <span class="col-count">2</span></h3>
+                            <div class="kanban-list">
+                                <div class="kanban-card" data-task="task_payment">
+                                    <span class="card-priority high">HIGH</span>
+                                    <h4 class="card-task-title">Automate SINPE Checking</h4>
+                                    <span class="card-stream">Backend / APIs</span>
+                                </div>
+                                <div class="kanban-card" data-task="task_routes">
+                                    <span class="card-priority low">LOW</span>
+                                    <h4 class="card-task-title">AI Driver Route Optimization</h4>
+                                    <span class="card-stream">Algorithms</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Col 2: In Progress -->
+                        <div class="kanban-col">
+                            <h3 class="col-title">IN PROGRESS <span class="col-count">2</span></h3>
+                            <div class="kanban-list">
+                                <div class="kanban-card" data-task="task_mobile">
+                                    <span class="card-priority medium">MEDIUM</span>
+                                    <h4 class="card-task-title">React Native Scanners App</h4>
+                                    <span class="card-stream">Mobile App</span>
+                                </div>
+                                <div class="kanban-card" data-task="task_invoices">
+                                    <span class="card-priority high">HIGH</span>
+                                    <h4 class="card-task-title">PDF Commercial Invoice Parser</h4>
+                                    <span class="card-stream">Backend</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Col 3: In Review -->
+                        <div class="kanban-col">
+                            <h3 class="col-title">IN REVIEW <span class="col-count">1</span></h3>
+                            <div class="kanban-list">
+                                <div class="kanban-card" data-task="task_cookies">
+                                    <span class="card-priority high">HIGH</span>
+                                    <h4 class="card-task-title">Interactive Cookies Switch preferences</h4>
+                                    <span class="card-stream">Frontend</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Col 4: Done -->
+                        <div class="kanban-col">
+                            <h3 class="col-title">DONE <span class="col-count">3</span></h3>
+                            <div class="kanban-list">
+                                <div class="kanban-card done" data-task="task_signup">
+                                    <span class="card-priority critical">CRITICAL</span>
+                                    <h4 class="card-task-title">Focus OTP Signup multi-step</h4>
+                                    <span class="card-stream">Auth / UI</span>
+                                </div>
+                                <div class="kanban-card done" data-task="task_tracker">
+                                    <span class="card-priority critical">CRITICAL</span>
+                                    <h4 class="card-task-title">SVG Ticker Tracker Live path</h4>
+                                    <span class="card-stream">Tracking</span>
+                                </div>
+                                <div class="kanban-card done" data-task="task_help">
+                                    <span class="card-priority medium">MEDIUM</span>
+                                    <h4 class="card-task-title">Smart Help FAQ Center FAB</h4>
+                                    <span class="card-stream">Support</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Task Detail Logger Console -->
+                    <div class="kanban-details-console">
+                        <div class="console-header">
+                            <span>REGISTROS SPRINT TERMINAL DE TAREA</span>
+                            <span class="console-dot green"></span>
+                        </div>
+                        <div class="console-body" id="kanban-console-terminal">
+                            <div class="log-row info">-- Haz clic en cualquier tarjeta del tablero Kanban de arriba para auditar su especificación de Sprint.</div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- SECTION 4: PRIORITY SYSTEM -->
+            <section id="priorities" class="spec-section">
+                <h2 class="section-title">4. Prioridades de Lanzamiento</h2>
+                <div class="spec-card">
+                    <p class="section-paragraph">Estructuramos las prioridades de ingeniería para enfocar los esfuerzos en componentes críticos antes de resolver capas de automatización:</p>
+                    <div class="priority-systems-grid">
+                        <div class="p-card critical">
+                            <span class="p-badge">CRITICAL</span>
+                            <strong>Security & Auth Core</strong>
+                            <p>JWT protected routes, OTP SMS grids y PostgreSQL RLS policies para bloquear accesos indebidos.</p>
+                        </div>
+                        <div class="p-card high">
+                            <span class="p-badge">HIGH</span>
+                            <strong>Calculadora & Tracker GPS</strong>
+                            <p>Estimación CIF, IVA arancelario, y ticker de velocidad satelital en el mapa tracker.</p>
+                        </div>
+                        <div class="p-card medium">
+                            <span class="p-badge">MEDIUM</span>
+                            <strong>Help Center & Invoices</strong>
+                            <p>Expandable categories index widgets y S3 invoice uploader progress simulator.</p>
+                        </div>
+                        <div class="p-card low">
+                            <span class="p-badge">LOW</span>
+                            <strong>Roadmap & Sprints</strong>
+                            <p>Visual planning dev dashboards y Notion scrollspy indicator boards.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 5: TECHNICAL ROADMAP -->
+            <section id="tech" class="spec-section">
+                <h2 class="section-title">5. Roadmap Técnico</h2>
+                <div class="spec-card">
+                    <p class="section-paragraph">El mapa de setup de staging e infraestructura técnica sigue una jerarquía de dependencias estricta:</p>
+                    <div class="tech-roadmap-timeline">
+                        <div class="tech-step">
+                            <div class="t-badge">Paso 1</div>
+                            <strong>Boilerplate Next.js & Mapeo CSS</strong>
+                            <p>Scaffolding, font preloading, e inicialización de variables de diseño `:root` en CSS.</p>
+                        </div>
+                        <div class="tech-step">
+                            <div class="t-badge">Paso 2</div>
+                            <strong>Instalación shadcn/ui Component Library</strong>
+                            <p>Ejecutar <code>npx shadcn-ui@latest init</code> para inyectar primitivas UI atómicas.</p>
+                        </div>
+                        <div class="tech-step">
+                            <div class="t-badge">Paso 3</div>
+                            <strong>Configuración Base Supabase & RLS</strong>
+                            <p>Sincronización de esquemas relacionales PostgreSQL y habilitación de RLS con filtros <code>auth.uid()</code>.</p>
+                        </div>
+                        <div class="tech-step">
+                            <div class="t-badge">Paso 4</div>
+                            <strong>Protected Routes Edge middleware</strong>
+                            <p>Despliegue de interceptores de sesión JWT al Vercel Edge para bloquear accesos directos.</p>
+                        </div>
+                        <div class="tech-step">
+                            <div class="t-badge">Paso 5</div>
+                            <strong>Vercel CDN Edge Deployment</strong>
+                            <p>Automatización de compilación estática global en milisegundos.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 6: LAUNCH PREPARATION -->
+            <section id="prep" class="spec-section">
+                <h2 class="section-title">6. Preparación para el Lanzamiento</h2>
+                <div class="spec-card">
+                    <p class="section-paragraph">Protocolo obligatorio de QA y auditorías de rendimiento previas a la liberación en producción:</p>
+                    <div class="prep-checklists-grid">
+                        <div class="prep-card">
+                            <span class="prep-check-box">✓</span>
+                            <div class="prep-card-info">
+                                <strong>Responsive Viewport testing</strong>
+                                <p>Validación de bottom capsule navigation transformations en viewports celulares por debajo de 900px.</p>
+                            </div>
+                        </div>
+                        <div class="prep-card">
+                            <span class="prep-check-box">✓</span>
+                            <div class="prep-card-info">
+                                <strong>Cross-Page database Syncing</strong>
+                                <p>Auditoría de consistencia de <code>localStorage</code> para que el panel operador admin modifique tracker milestones en vivo.</p>
+                            </div>
+                        </div>
+                        <div class="prep-card">
+                            <span class="prep-check-box">✓</span>
+                            <div class="prep-card-info">
+                                <strong>Security Edge Auditing</strong>
+                                <p>Validación de Edge middlewares para bloquear accesos directos a sub-rutas sin cookies de sesión.</p>
+                            </div>
+                        </div>
+                        <div class="prep-card">
+                            <span class="prep-check-box">✓</span>
+                            <div class="prep-card-info">
+                                <strong>Volumetric pricing validation</strong>
+                                <p>Garantía de aranceles fletes y cálculo volumétrico bloqueado bajo estándares IATA.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 7: ROADMAP SPRINT CARDS FUTUROS -->
+            <section id="future" class="spec-section">
+                <h2 class="section-title">7. Sprints Futuros & Roadmap</h2>
+                <div class="spec-card">
+                    <p class="section-paragraph">La arquitectura modular y escalable permite liberar las siguientes características en sprints post-lanzamiento:</p>
+                    <div class="future-sprints-row">
+                        <div class="future-card">
+                            <span class="future-num">S1</span>
+                            <strong>BAC Checkouts & SINPE Gateways</strong>
+                            <p>Auto-validación de CRC SINPE depósitos móviles por lectura de SMS para liberar fletes.</p>
+                        </div>
+                        <div class="future-card">
+                            <span class="future-num">S2</span>
+                            <strong>Rutas AI de Reparto</strong>
+                            <p>Optimización inteligente de camiones según congestión en Costa Rica para predecir ETAs.</p>
+                        </div>
+                        <div class="future-card">
+                            <span class="future-num">S3</span>
+                            <strong>Native Mobile Scanner App</strong>
+                            <p>Aplicación móvil híbrida con escáner de barras para agilizar bodegas Miami.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+    </div>
+
+    <!-- Scripts -->
+    <script src="roadmap.js"></script>
+    <script src="cookie-consent.js"></script>
+    <!-- Smart Help Assistant -->
+    <script src="help-assistant.js"></script>
+</body>
+</html>

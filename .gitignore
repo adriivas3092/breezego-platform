@@ -1,0 +1,57 @@
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# next.js
+/.next/
+/out/
+/build
+next-env.d.ts
+*.tsbuildinfo
+
+# production
+/dist
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm
+
+# local env files — NUNCA subir secretos
+.env
+.env*.local
+.env.production
+.env.vercel.production
+.env.development
+test_env.txt
+
+# vercel
+.vercel
+
+# vendored / no pertenece al repo
+/spec-kit/
+
+# scripts de debug sueltos (no son parte de la app)
+extract*.js
+extract_strings_to_file.js
+inspect_*.js
+check_packages_schema.js
+query_*.js
+test_*.js
+test-security.js
+scope_css*.js
+scope_css.py
+fetch_schema.js
+fetch_openapi.js
+app.js
+update_users.sql
+
+# editor
+.idea
+.vscode

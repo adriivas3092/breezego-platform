@@ -1,0 +1,101 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 224 71% 4%;
+    --foreground: 213 31% 91%;
+
+    --card: 217 33% 17%;
+    --card-foreground: 213 31% 91%;
+
+    --popover: 224 71% 4%;
+    --popover-foreground: 213 31% 91%;
+
+    --primary: 185 64% 55%;
+    --primary-foreground: 224 71% 4%;
+
+    --secondary: 191 85% 32%;
+    --secondary-foreground: 213 31% 91%;
+
+    --muted: 223 47% 11%;
+    --muted-foreground: 215.4 16.3% 56.9%;
+
+    --accent: 185 64% 55%;
+    --accent-foreground: 224 71% 4%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217 33% 17%;
+    --input: 217 33% 17%;
+    --ring: 185 64% 55%;
+
+    --radius: 0.75rem;
+    
+    --brand-cyan: 185 64% 55%;
+    --brand-teal: 191 85% 32%;
+    --brand-orange: 13 97% 67%;
+    --brand-navy: 217 33% 17%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-[#0b0f19] text-[#f8fafc] antialiased;
+    font-family: var(--font-body), 'Inter', sans-serif;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading), 'Montserrat', sans-serif !important;
+    letter-spacing: -0.02em;
+    font-weight: 800;
+  }
+}
+
+/* Glassmorphism utility */
+.glass-panel {
+  background: rgba(29, 42, 62, 0.45);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(11, 17, 26, 0.3);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(70, 199, 210, 0.15);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(70, 199, 210, 0.3);
+}
+
+@keyframes ping-glow {
+  0% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.5); opacity: 0; }
+  100% { transform: scale(1); opacity: 0; }
+}
+
+.ping-glow-dot {
+  position: relative;
+}
+.ping-glow-dot::after {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  background: inherit;
+  border-radius: inherit;
+  animation: ping-glow 2s infinite ease-in-out;
+}

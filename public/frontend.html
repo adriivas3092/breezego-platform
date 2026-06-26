@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BreezeGo - Arquitectura Frontend & Handoff</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="frontend.css">
+</head>
+<body class="fe-theme-dark">
+
+    <!-- DEV FRONTEND SPEC LAYOUT -->
+    <div class="fe-console-layout">
+        
+        <!-- SIDEBAR INDEX TABLE OF CONTENTS (Vercel-style) -->
+        <aside class="fe-sidebar">
+            <div class="fe-sidebar-header">
+                <a href="index.html" class="fe-logo-link">
+                    <img src="logo.png" alt="BreezeGo Logo" class="fe-brand-logo">
+                </a>
+                <span class="fe-badge">Frontend Spec</span>
+            </div>
+            
+            <nav class="fe-toc" id="fe-sidebar-toc">
+                <div class="toc-title">INGENIERÍA FRONTEND</div>
+                <a href="#routing" class="toc-link active">1. Ruteo App Router</a>
+                <a href="#components" class="toc-link">2. Módulos & Componentes</a>
+                <a href="#layouts" class="toc-link">3. Sistema de Layouts</a>
+                <a href="#responsive" class="toc-link">4. Responsividad & Nav</a>
+                <a href="#handoff" class="toc-link">5. Tokens de Handoff</a>
+                <a href="#blueprint" class="toc-link">6. Desarrollo Blueprint</a>
+                <a href="#security" class="toc-link">7. Filtros de Seguridad</a>
+            </nav>
+            
+            <div class="fe-sidebar-footer">
+                <a href="product.html" class="footer-back-link">📋 Ir a Product Spec ➔</a>
+            </div>
+        </aside>
+
+        <!-- MAIN SCROLLABLE ENGINEERING SPEC SHEET -->
+        <main class="fe-main-content" id="fe-scroll-container">
+            
+            <!-- HEADER -->
+            <header class="fe-portal-header">
+                <div class="header-glow-orb"></div>
+                <span class="portal-tag">SaaS Engineering Specs</span>
+                <h1 class="portal-title">Arquitectura Frontend & Desarrollo</h1>
+                <p class="portal-subtitle">Desglose secuencial de componentes reactivos, grids responsivos, variables de diseño y capas de seguridad.</p>
+            </header>
+
+            <!-- SECTION 1: FRONTEND ARCHITECTURE & APP ROUTER TREE -->
+            <section id="routing" class="spec-section">
+                <h2 class="section-title">1. Estructura Next.js App Router</h2>
+                <div class="spec-card">
+                    <p class="section-paragraph">La estructura rutea las vistas mediante grupos de rutas de Next.js, encapsulando layouts y protegiendo accesos a través de Edge middlewares. Haz clic en las carpetas para explorar directorios:</p>
+                    
+                    <!-- Interactive Directory Tree Visualizer -->
+                    <div class="dir-tree-box">
+                        
+                        <!-- Root app folder -->
+                        <div class="tree-folder open" data-folder="app">
+                            <span class="folder-toggle">▼</span>
+                            <span class="folder-icon">📁</span>
+                            <span class="folder-name">app/</span>
+                        </div>
+                        
+                        <div class="tree-children" id="tree-child-app">
+                            <div class="tree-file"><span class="file-icon">📄</span> <span class="file-name">layout.tsx</span> <span class="file-tag root">Root Layout</span></div>
+                            <div class="tree-file"><span class="file-icon">📄</span> <span class="file-name">globals.css</span> <span class="file-tag theme">Theme Tokens</span></div>
+                            
+                            <!-- Group 1: marketing -->
+                            <div class="tree-folder open" data-folder="marketing">
+                                <span class="folder-toggle">▼</span>
+                                <span class="folder-icon">📁</span>
+                                <span class="folder-name">(marketing)/</span>
+                                <span class="group-tag public">Public Route Group</span>
+                            </div>
+                            <div class="tree-children" id="tree-child-marketing">
+                                <div class="tree-file"><span class="file-icon">📄</span> <span class="file-name">layout.tsx</span></div>
+                                <div class="tree-file"><span class="file-icon">📄</span> <span class="file-name">page.tsx</span> <span class="file-route">/ (Home Portal)</span></div>
+                                <div class="tree-file"><span class="file-icon">📄</span> <span class="file-name">calculator/page.tsx</span> <span class="file-route">/calculator</span></div>
+                                <div class="tree-file"><span class="file-icon">📄</span> <span class="file-name">tracker/page.tsx</span> <span class="file-route">/tracker</span></div>
+                            </div>
+
+                            <!-- Group 2: auth -->
+                            <div class="tree-folder open" data-folder="auth">
+                                <span class="folder-toggle">▼</span>
+                                <span class="folder-icon">📁</span>
+                                <span class="folder-name">(auth)/</span>
+                                <span class="group-tag public">Guest Route Group</span>
+                            </div>
+                            <div class="tree-children" id="tree-child-auth">
+                                <div class="tree-file"><span class="file-icon">📄</span> <span class="file-name">layout.tsx</span></div>
+                                <div class="tree-file"><span class="file-icon">📄</span> <span class="file-name">login/page.tsx</span> <span class="file-route">/login</span></div>
+                                <div class="tree-file"><span class="file-icon">📄</span> <span class="file-name">signup/page.tsx</span> <span class="file-route">/signup</span></div>
+                            </div>
+
+                            <!-- Group 3: dashboard -->
+                            <div class="tree-folder open" data-folder="dashboard">
+                                <span class="folder-toggle">▼</span>
+                                <span class="folder-icon">📁</span>
+                                <span class="folder-name">(dashboard)/</span>
+                                <span class="group-tag protected">Protected Route Group</span>
+                            </div>
+                            <div class="tree-children" id="tree-child-dashboard">
+                                <div class="tree-file"><span class="file-icon">📄</span> <span class="file-name">layout.tsx</span> <span class="file-tag middleware">Auth Guard Middleware</span></div>
+                                <div class="tree-file"><span class="file-icon">📄</span> <span class="file-name">page.tsx</span> <span class="file-route">/dashboard</span></div>
+                                <div class="tree-file"><span class="file-icon">📄</span> <span class="file-name">packages/page.tsx</span> <span class="file-route">/packages</span></div>
+                                <div class="tree-file"><span class="file-icon">📄</span> <span class="file-name">prealerts/page.tsx</span> <span class="file-route">/prealerts</span></div>
+                                <div class="tree-file"><span class="file-icon">📄</span> <span class="file-name">admin/page.tsx</span> <span class="file-route">/admin</span></div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 2: COMPONENT ARCHITECTURE -->
+            <section id="components" class="spec-section">
+                <h2 class="section-title">2. Estructura de Componentes</h2>
+                <div class="spec-card">
+                    <p class="section-paragraph">Composición y dependencia de componentes. Las primitivas de UI atómicas (shadcn/ui) se consolidan en componentes interactivos y widgets complejos:</p>
+                    
+                    <div class="comp-structure-flow">
+                        <!-- Layer 1: Primitives -->
+                        <div class="comp-layer">
+                            <span class="layer-title">PRIMITIVAS UI (ATÓMICOS)</span>
+                            <div class="comp-row">
+                                <div class="comp-box primitive">Button</div>
+                                <div class="comp-box primitive">Input</div>
+                                <div class="comp-box primitive">Badge</div>
+                                <div class="comp-box primitive">Switch</div>
+                            </div>
+                        </div>
+
+                        <div class="flow-down-arrow">↓</div>
+
+                        <!-- Layer 2: Custom Components -->
+                        <div class="comp-layer">
+                            <span class="layer-title">COMPONENTES COMPUESTOS (MOLÉCULAS)</span>
+                            <div class="comp-row">
+                                <div class="comp-box composite">Card Container</div>
+                                <div class="comp-box composite">Form Controller</div>
+                                <div class="comp-box composite">Ledger Table</div>
+                            </div>
+                        </div>
+
+                        <div class="flow-down-arrow">↓</div>
+
+                        <!-- Layer 3: Dynamic Widgets -->
+                        <div class="comp-layer">
+                            <span class="layer-title">MÓDULOS & WIDGETS DE PÁGINAS</span>
+                            <div class="comp-row">
+                                <div class="comp-box widget">Miami Address Widget</div>
+                                <div class="comp-box widget">Pre-Alert Form Modal</div>
+                                <div class="comp-box widget">GPS Live Map Ticker</div>
+                                <div class="comp-box widget">Help Center FAQ Widget</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 3: LAYOUT SYSTEM -->
+            <section id="layouts" class="spec-section">
+                <h2 class="section-title">3. Sistema de Layouts</h2>
+                <div class="spec-card">
+                    <p class="section-paragraph">Estructuras básicas y wrappers definidos a nivel de carpetas para encapsular cabeceras y paneles laterales:</p>
+                    
+                    <div class="layouts-wireframe-grid">
+                        
+                        <!-- Wireframe 1: Public layout -->
+                        <div class="wireframe-box">
+                            <h4 class="wf-title">Public Layout ((marketing))</h4>
+                            <div class="wf-canvas public">
+                                <div class="wf-header">PUBLIC HEADER (Sticky Header Nav)</div>
+                                <div class="wf-body">PUBLIC PAGE CONTENT (calculator, tracker, legal...)</div>
+                                <div class="wf-footer">PUBLIC FOOTER (Links, Socials, legal indexes)</div>
+                            </div>
+                        </div>
+
+                        <!-- Wireframe 2: Dashboard layout -->
+                        <div class="wireframe-box">
+                            <h4 class="wf-title">Dashboard Layout ((dashboard))</h4>
+                            <div class="wf-canvas dashboard">
+                                <div class="wf-sidebar-left">SIDEBAR NAV</div>
+                                <div class="wf-panel-main">
+                                    <div class="wf-sub-header">DASHBOARD COMMAND HEADER</div>
+                                    <div class="wf-body-inner">LEDGER DATA VIEW (invoices, packages)</div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 4: RESPONSIVE SYSTEM -->
+            <section id="responsive" class="spec-section">
+                <h2 class="section-title">4. Responsividad & Nav Transformations</h2>
+                <div class="spec-card">
+                    <p class="section-paragraph">Para brindar una navegación nativa en móviles, implementamos transformaciones de interfaces en viewports menores a 900px:</p>
+                    
+                    <div class="responsive-adapt-card">
+                        <div class="adapt-side desktop">
+                            <strong>Computadora (Viewport > 900px)</strong>
+                            <p>El menú de control lateral se monta fijo a la izquierda (280px), optimizando espacio de lectura horizontal para tablas de fletes.</p>
+                            <div class="wf-visual-nav desktop"></div>
+                        </div>
+                        
+                        <div class="adapt-arrow">➔</div>
+                        
+                        <div class="adapt-side mobile">
+                            <strong>Celular (Viewport &le; 900px)</strong>
+                            <p>El menú lateral se oculta por CSS y monta un panel circular flotante estilo cápsula en la parte inferior de la pantalla (Uber Eats style) para fácil acceso táctil.</p>
+                            <div class="wf-visual-nav mobile"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 5: DESIGN HANDOFF TOKENS -->
+            <section id="handoff" class="spec-section">
+                <h2 class="section-title">5. Tokens de Diseño & Handoff</h2>
+                <div class="spec-card">
+                    <p class="section-paragraph">Definición de variables `:root` estandarizadas para desarrollo frontend. Asegura consistencia de fuentes, separadores y colores:</p>
+                    
+                    <div class="tokens-layout">
+                        <!-- Spacing chips -->
+                        <div class="token-group">
+                            <h4 class="token-group-title">Escala de Espaciado (Padding / Margins)</h4>
+                            <div class="spacing-chips-row">
+                                <span class="space-chip" data-val="4px">s1: 4px</span>
+                                <span class="space-chip" data-val="8px">s2: 8px</span>
+                                <span class="space-chip" data-val="12px">s3: 12px</span>
+                                <span class="space-chip" data-val="16px">s4: 16px</span>
+                                <span class="space-chip" data-val="24px">s6: 24px</span>
+                                <span class="space-chip" data-val="32px">s8: 32px</span>
+                            </div>
+                        </div>
+
+                        <!-- Colors grid -->
+                        <div class="token-group">
+                            <h4 class="token-group-title">Variables de Color Corporativas</h4>
+                            <div class="colors-tokens-grid">
+                                <div class="color-token-box" style="background:#46C7D2; color:#111;">
+                                    <strong>Cyan Base</strong>
+                                    <span>#46C7D2</span>
+                                </div>
+                                <div class="color-token-box" style="background:#0C8096; color:#ffffff;">
+                                    <strong>Teal Accent</strong>
+                                    <span>#0C8096</span>
+                                </div>
+                                <div class="color-token-box" style="background:#FC7C58; color:#ffffff;">
+                                    <strong>Orange Alert</strong>
+                                    <span>#FC7C58</span>
+                                </div>
+                                <div class="color-token-box" style="background:#1D2A3E; color:#ffffff;">
+                                    <strong>Navy Base</strong>
+                                    <span>#1D2A3E</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Typography details -->
+                        <div class="token-group">
+                            <h4 class="token-group-title">Jerarquía Tipográfica (Montserrat + Inter)</h4>
+                            <div class="typo-token-row">
+                                <span class="typo-item" style="font-family:'Montserrat',sans-serif; font-size:1.35rem; font-weight:800;">Montserrat Bold (Títulos, Headings)</span>
+                                <span class="typo-item" style="font-family:'Inter',sans-serif; font-size:0.88rem; font-weight:400;">Inter Regular (Textos, listas de datos)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 6: DEVELOPMENT BLUEPRINT -->
+            <section id="blueprint" class="spec-section">
+                <h2 class="section-title">6. Desarrollo Blueprint</h2>
+                <div class="spec-card">
+                    <p class="section-paragraph">La infraestructura cloud de BreezeGo aprovecha microservicios edge distribuidos para escalabilidad automática y latencia menor a 100ms:</p>
+                    
+                    <div class="stack-architecture-cards">
+                        <!-- Front node -->
+                        <div class="stack-blueprint-card front">
+                            <h4 class="blueprint-tech-title">🎨 Frontend Engine</h4>
+                            <div class="blueprint-tech-name">Next.js + Tailwind</div>
+                            <div class="blueprint-bullets">
+                                <span>• shadcn/ui React patterns</span>
+                                <span>• Static HTML5 optimized CDN</span>
+                                <span>• HSL tailwind colors map</span>
+                            </div>
+                        </div>
+
+                        <!-- Edge node -->
+                        <div class="stack-blueprint-card edge">
+                            <h4 class="blueprint-tech-title">🌐 Edge Routing</h4>
+                            <div class="blueprint-tech-name">Vercel + Cloudflare</div>
+                            <div class="blueprint-bullets">
+                                <span>• Global static Edge routing</span>
+                                <span>• DNS & Cloudflare WAF protected</span>
+                                <span>• Sub-100ms load CDN nodes</span>
+                            </div>
+                        </div>
+
+                        <!-- BaaS node -->
+                        <div class="stack-blueprint-card baas">
+                            <h4 class="blueprint-tech-title">⚡ Serverless Backend</h4>
+                            <div class="blueprint-tech-name">Supabase Services</div>
+                            <div class="blueprint-bullets">
+                                <span>• GoTrue user Auth JWT</span>
+                                <span>• Websocket Realtime streams</span>
+                                <span>• S3 PDF Invoice Buckets</span>
+                            </div>
+                        </div>
+
+                        <!-- Database node -->
+                        <div class="stack-blueprint-card db">
+                            <h4 class="blueprint-tech-title">💾 Transaccional DB</h4>
+                            <div class="blueprint-tech-name">Postgres + Upstash</div>
+                            <div class="blueprint-bullets">
+                                <span>• Postgres RLS row locks</span>
+                                <span>• Upstash Redis Rate Limiter</span>
+                                <span>• Relational schemas sync</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 7: SECURITY LAYER -->
+            <section id="security" class="spec-section">
+                <h2 class="section-title">7. Filtros de Seguridad</h2>
+                <div class="spec-card">
+                    <p class="section-paragraph">Filtros de control ejecutados al Edge del servidor para mitigar accesos indebidos y abusos:</p>
+                    
+                    <div class="security-systems-grid">
+                        
+                        <!-- Security Item 1 -->
+                        <div class="sec-item-box">
+                            <h4 class="sec-box-title">🔒 Route Protection Middleware</h4>
+                            <p class="sec-box-desc">Valida la cookie del JWT de sesión antes de resolver las rutas protegidas. Si es inválido, redirige automáticamente a <code>/login</code>.</p>
+                        </div>
+
+                        <!-- Security Item 2 -->
+                        <div class="sec-item-box">
+                            <h4 class="sec-box-title">🛡️ Row Level Security (RLS)</h4>
+                            <p class="sec-box-desc">Valida que el UUID del usuario autenticado coincida con el <code>user_id</code> del registro. Rechaza lecturas y mutaciones ajenas.</p>
+                        </div>
+
+                        <!-- Security Item 3 -->
+                        <div class="sec-item-box">
+                            <h4 class="sec-box-title">⚡ Upstash Edge Rate Limiting</h4>
+                            <p class="sec-box-desc">Rastrea peticiones por IP en Redis. Si un cliente excede 60 llamadas por minuto en OTPSMS o cotizador, bloquea temporalmente con un error <code>429 Too Many Requests</code>.</p>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+    </div>
+
+    <!-- Scripts -->
+    <script src="frontend.js"></script>
+    <script src="cookie-consent.js"></script>
+    <!-- Smart Help Assistant -->
+    <script src="help-assistant.js"></script>
+</body>
+</html>

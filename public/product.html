@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BreezeGo - Especificación de Producto & Planeación</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="product.css">
+</head>
+<body class="product-theme-dark">
+
+    <!-- DEV PRODUCT SPEC LAYOUT -->
+    <div class="product-layout">
+        
+        <!-- SIDEBAR INDEX TABLE OF CONTENTS (Notion-style) -->
+        <aside class="product-sidebar">
+            <div class="product-sidebar-header">
+                <a href="index.html" class="product-logo-link">
+                    <img src="logo.png" alt="BreezeGo Logo" class="product-brand-logo">
+                </a>
+                <span class="product-badge">Product Spec</span>
+            </div>
+            
+            <nav class="product-toc" id="product-sidebar-toc">
+                <div class="toc-title">ESPECIFICACIÓN</div>
+                <a href="#overview" class="toc-link active">1. Resumen de Producto</a>
+                <a href="#roles" class="toc-link">2. Roles de Usuario</a>
+                <a href="#features" class="toc-link">3. Características Core</a>
+                <a href="#dashboard" class="toc-link">4. Lógica de Dashboard</a>
+                <a href="#tracking" class="toc-link">5. Lógica de Rastreo</a>
+                <a href="#mailbox" class="toc-link">6. Lógica de Casillero</a>
+                <a href="#prealert" class="toc-link">7. Lógica de Prealerta</a>
+                <a href="#notifications" class="toc-link">8. Notificaciones</a>
+                <a href="#database" class="toc-link">9. Blueprint DB</a>
+                <a href="#security" class="toc-link">10. Seguridad & RLS</a>
+                <a href="#frontend" class="toc-link">11. Arquitectura Frontend</a>
+                <a href="#backend" class="toc-link">12. Arquitectura Backend</a>
+                <a href="#roadmap" class="toc-link">13. Sprints Futuros</a>
+            </nav>
+            
+            <div class="product-sidebar-footer">
+                <a href="architecture.html" class="footer-back-link">📊 Ir a Consola DB ➔</a>
+            </div>
+        </aside>
+
+        <!-- MAIN SCROLLABLE SPECIFICATIONS SHEET -->
+        <main class="product-main-content" id="product-scroll-container">
+            
+            <!-- PORTAL WELCOME HEADER -->
+            <header class="product-portal-header">
+                <div class="header-glow-orb"></div>
+                <span class="portal-tag">BreezeGo SaaS Blueprint</span>
+                <h1 class="portal-title">Especificación de Producto & Planeación</h1>
+                <p class="portal-subtitle">Visión general, workflows lógicos, accesos arancelarios y arquitectura técnica de la plataforma lograda.</p>
+            </header>
+
+            <!-- SECTION 1: PRODUCT OVERVIEW -->
+            <section id="overview" class="spec-section">
+                <h2 class="section-title">1. Resumen de Producto</h2>
+                <div class="spec-card">
+                    <p class="section-paragraph">BreezeGo es una plataforma moderna de logística SaaS diseñada para simplificar, agilizar y transparentar el flete internacional y forwarding de paquetes desde Miami, Florida hacia todo Costa Rica.</p>
+                    <div class="props-grid">
+                        <div class="prop-card">
+                            <span class="prop-icon">⚡</span>
+                            <h4 class="prop-title">Fletes Aéreos Rápidos</h4>
+                            <p class="prop-text">Traslados consolidados directos a San José en un promedio de 2 a 3 días hábiles.</p>
+                        </div>
+                        <div class="prop-card">
+                            <span class="prop-icon">📐</span>
+                            <h4 class="prop-title">Cobro Volumétrico Justo</h4>
+                            <p class="prop-text">Aplica exactamente la normativa estándar IATA <code>(L*W*H)/166</code> en libras.</p>
+                        </div>
+                        <div class="prop-card">
+                            <span class="prop-icon">🛡️</span>
+                            <h4 class="prop-title">Aduanas Aceleradas</h4>
+                            <p class="prop-text">Trámites e impuestos CIF estimados digitalmente antes de arribar a aduana.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 2: USER ROLES -->
+            <section id="roles" class="spec-section">
+                <h2 class="section-title">2. Roles de Usuario & Capacidades</h2>
+                <div class="spec-card">
+                    <p class="section-paragraph">El sistema divide las capacidades de acceso y operaciones en cuatro perfiles de usuario clave:</p>
+                    <div class="roles-grid">
+                        <div class="role-card client">
+                            <h4 class="role-title">Cliente (Client)</h4>
+                            <ul class="role-bullets">
+                                <li>Crear casillero Suite Miami.</li>
+                                <li>Registrar prealertas de facturas.</li>
+                                <li>Cotizar fletes y ver tracker live.</li>
+                                <li>Pagar cargos de liberación.</li>
+                            </ul>
+                        </div>
+                        <div class="role-card operator">
+                            <h4 class="role-title">Operador (Operator)</h4>
+                            <ul class="role-bullets">
+                                <li>Pesar paquetes físicos en Miami.</li>
+                                <li>Escanear códigos de fletes.</li>
+                                <li>Modificar estados del tracker.</li>
+                                <li>Asignar choferes y rutas locales.</li>
+                            </ul>
+                        </div>
+                        <div class="role-card support">
+                            <h4 class="role-title">Soporte (Support)</h4>
+                            <ul class="role-bullets">
+                                <li>Resolver disputas y aranceles.</li>
+                                <li>Tramitar permisos de salud.</li>
+                                <li>Gestionar tickets de helpdesk.</li>
+                                <li>Auditar facturas inconsistentes.</li>
+                            </ul>
+                        </div>
+                        <div class="role-card admin">
+                            <h4 class="role-title">Administrador (Admin)</h4>
+                            <ul class="role-bullets">
+                                <li>Control total de base de datos.</li>
+                                <li>Definir multipliers de tarifas.</li>
+                                <li>Modificar tasas de aranceles.</li>
+                                <li>Auditar logs del servidor.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 3: CORE FEATURES -->
+            <section id="features" class="spec-section">
+                <h2 class="section-title">3. Características Core</h2>
+                <div class="spec-card">
+                    <div class="feature-rows-list">
+                        <div class="fe-row-item">
+                            <div class="fe-meta">
+                                <span class="fe-num">01</span>
+                                <h4 class="fe-name">Dashboard Unificado</h4>
+                            </div>
+                            <p class="fe-desc">Consola central donde el cliente copia su suite Miami, visualiza contadores dinámicos de paquetes y revisa alertas de importación.</p>
+                        </div>
+                        <div class="fe-row-item">
+                            <div class="fe-meta">
+                                <span class="fe-num">02</span>
+                                <h4 class="fe-name">Calculadora de Tarifas</h4>
+                            </div>
+                            <p class="fe-desc">Simulador fiscal que desglosa fletes aéreos/marítimos, seguros, aranceles CIF e IVA costarricense en USD y Colones ₡.</p>
+                        </div>
+                        <div class="fe-row-item">
+                            <div class="fe-meta">
+                                <span class="fe-num">03</span>
+                                <h4 class="fe-name">Rastreador GPS Satelital</h4>
+                            </div>
+                            <p class="fe-desc">Mapea la posición exacta de las camionetas en reparto local en tiempo real, integrando mensajería directa con el transportista.</p>
+                        </div>
+                        <div class="fe-row-item">
+                            <div class="fe-meta">
+                                <span class="fe-num">04</span>
+                                <h4 class="fe-name">Centro de Ayuda Inteligente</h4>
+                            </div>
+                            <p class="fe-desc">Ayuda interactiva con buscador en tiempo real, desgloses visuales por categorías y guías paso a paso de resolución rápida.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 4: DASHBOARD LOGIC -->
+            <section id="dashboard" class="spec-section">
+                <h2 class="section-title">4. Lógica de Dashboard</h2>
+                <div class="spec-card">
+                    <p class="section-paragraph">El Dashboard unificado sincroniza estados dinámicamente consumiendo y mapeando datos locales. Los principales disparadores son:</p>
+                    <div class="logic-box">
+                        <h4 class="logic-box-title">💡 Address Copy Clipboard</h4>
+                        <p class="logic-box-desc">Al hacer clic en cualquier campo de la dirección en Miami, el controlador JS copia los datos en memoria física del cliente, gatilla una animación en el icono 📋 y desliza un Toast animado.</p>
+                    </div>
+                    <div class="logic-box">
+                        <h4 class="logic-box-title">💡 Metric Counter Sync</h4>
+                        <p class="logic-box-desc">Al inicializarse, filtra las filas de paquetes en <code>localStorage</code> sumando estados correlativos y poblando los badges circulares en tiempo real.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 5: TRACKING LOGIC -->
+            <section id="tracking" class="spec-section">
+                <h2 class="section-title">5. Lógica de Rastreo</h2>
+                <div class="spec-card">
+                    <p class="section-paragraph">El flete avanza secuencialmente a través de 6 hitos cronológicos validados por los operadores logísticos:</p>
+                    <div class="tracking-logic-flow">
+                        <div class="track-step">
+                            <span class="step-badge">1</span>
+                            <div class="step-info">
+                                <strong>Prealertado:</strong> Registro digital del paquete con su tracking de tienda y factura comercial.
+                            </div>
+                        </div>
+                        <div class="track-step">
+                            <span class="step-badge">2</span>
+                            <div class="step-info">
+                                <strong>Listo en Miami:</strong> Recepción y pesaje físico en bodegas de Florida. Cálculo flete chargeable.
+                            </div>
+                        </div>
+                        <div class="track-step">
+                            <span class="step-badge">3</span>
+                            <div class="step-info">
+                                <strong>En Tránsito:</strong> Asociación al manifiesto del flete aéreo internacional consolidado SJO.
+                            </div>
+                        </div>
+                        <div class="track-step">
+                            <span class="step-badge">4</span>
+                            <div class="step-info">
+                                <strong>Aduana Costa Rica:</strong> Validación de impuestos arancelarios fiscales CIF ante el sistema digital TICA.
+                            </div>
+                        </div>
+                        <div class="track-step">
+                            <span class="step-badge">5</span>
+                            <div class="step-info">
+                                <strong>En Reparto Local:</strong> Camioneta en ruta de entrega GAM. Publicación de coordenadas GPS y ETA.
+                            </div>
+                        </div>
+                        <div class="track-step">
+                            <span class="step-badge">6</span>
+                            <div class="step-info">
+                                <strong>Entregado:</strong> Validado mediante firma digital y bloqueo contra modificaciones futuras.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 6: MAILBOX LOGIC -->
+            <section id="mailbox" class="spec-section">
+                <h2 class="section-title">6. Lógica de Casillero</h2>
+                <div class="spec-card">
+                    <p class="section-paragraph">El casillero otorga una suite miami fiscal inmediata. La plantilla de entrega obligatoria configurada es:</p>
+                    <div class="mailbox-template-box">
+                        <div class="tpl-row"><span class="tpl-lbl">Nombre:</span> <span class="tpl-val">[Nombre Completo] BZ-5062-MIA</span></div>
+                        <div class="tpl-row"><span class="tpl-lbl">Dirección 1:</span> <span class="tpl-val">8240 NW 52nd Terrace</span></div>
+                        <div class="tpl-row"><span class="tpl-lbl">Dirección 2:</span> <span class="tpl-val">Suite 100</span></div>
+                        <div class="tpl-row"><span class="tpl-lbl">Ciudad / Estado:</span> <span class="tpl-val">Miami, FL</span></div>
+                        <div class="tpl-row"><span class="tpl-lbl">Zip Code:</span> <span class="tpl-val">33166</span></div>
+                        <div class="tpl-row"><span class="tpl-lbl">Teléfono:</span> <span class="tpl-val">+1 (305) 506-8910</span></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 7: PRE-ALERT LOGIC -->
+            <section id="prealert" class="spec-section">
+                <h2 class="section-title">7. Lógica de Prealerta</h2>
+                <div class="spec-card">
+                    <p class="section-paragraph">El flujo de prealertas recopila los datos de compra físicos y facturas para agilizar los aforos nacionales un 80%:</p>
+                    <div class="prealert-diagram">
+                        <div class="dia-node">
+                            <span class="dia-icon">🛒</span>
+                            <span>Adquirir Tracking de Tienda</span>
+                        </div>
+                        <div class="dia-arrow">➔</div>
+                        <div class="dia-node">
+                            <span class="dia-icon">📝</span>
+                            <span>Registrar Tienda, Valor y Tipo</span>
+                        </div>
+                        <div class="dia-arrow">➔</div>
+                        <div class="dia-node">
+                            <span class="dia-icon">📄</span>
+                            <span>Cargar Factura PDF (Storage)</span>
+                        </div>
+                        <div class="dia-arrow">➔</div>
+                        <div class="dia-node">
+                            <span class="dia-icon">✔️</span>
+                            <span>Nacionalización Acelerada</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 8: NOTIFICATIONS SYSTEM -->
+            <section id="notifications" class="spec-section">
+                <h2 class="section-title">8. Sistema de Notificaciones</h2>
+                <div class="spec-card">
+                    <p class="section-paragraph">Notificaciones y alertas automatizadas reducen los cuellos de botella mediante avisos directos en el Dashboard:</p>
+                    <div class="notifications-template-card">
+                        <div class="notif-header">
+                            <span class="notif-bell">🔔</span>
+                            <h4 class="notif-title">Estructura del Registro JSON</h4>
+                        </div>
+                        <pre class="json-code">
+{
+  "id": "UUID",
+  "user_id": "UUID",
+  "title": "Ingreso a Miami Bodegaje",
+  "message": "Tu flete BZ-506-SJO se ha pesado y registrado en Miami.",
+  "is_read": false,
+  "created_at": "TIMESTAMP"
+}</pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 9: DATABASE BLUEPRINT -->
+            <section id="database" class="spec-section">
+                <h2 class="section-title">9. Blueprint de Base de Datos</h2>
+                <div class="spec-card">
+                    <p class="section-paragraph">Esquema de relaciones de base de datos relacional (PostgreSQL) estructurado en 8 entidades:</p>
+                    <div class="db-blueprint-summary">
+                        <div class="db-entity-mini">
+                            <strong>profiles</strong>
+                            <span>id (UUID) [PK], phone, suite_code, delivery_address, delivery_class, freight_preference</span>
+                        </div>
+                        <div class="db-entity-mini">
+                            <strong>packages</strong>
+                            <span>id (UUID) [PK], user_id [FK], tracking_number, breeze_code, weight, status</span>
+                        </div>
+                        <div class="db-entity-mini">
+                            <strong>tracking_events</strong>
+                            <span>id (UUID) [PK], package_id [FK], status, message, latitude, longitude, driver_name</span>
+                        </div>
+                        <div class="db-entity-mini">
+                            <strong>invoices</strong>
+                            <span>id (UUID) [PK], package_id [FK], flete_cost, taxes_cost, total_cost_crc, is_paid</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 10: SECURITY ARCHITECTURE -->
+            <section id="security" class="spec-section">
+                <h2 class="section-title">10. Seguridad & RLS</h2>
+                <div class="spec-card">
+                    <p class="section-paragraph">La seguridad a nivel de base de datos se garantiza mediante políticas de **Row Level Security (RLS)** en Supabase/PostgreSQL. Cada usuario autenticado con su JSON Web Token (JWT) solo puede operar en registros que cumplan con la validación de propiedad:</p>
+                    <div class="security-rules-box">
+                        <div class="rule-item">
+                            <span class="rule-tag read">SELECT</span>
+                            <code>CREATE POLICY "Select own profiles" ON profiles FOR SELECT TO authenticated USING (auth.uid() = id);</code>
+                        </div>
+                        <div class="rule-item">
+                            <span class="rule-tag write">UPDATE</span>
+                            <code>CREATE POLICY "Update own fletes" ON packages FOR UPDATE TO authenticated USING (auth.uid() = user_id);</code>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 11: FRONTEND ARCHITECTURE -->
+            <section id="frontend" class="spec-section">
+                <h2 class="section-title">11. Arquitectura Frontend</h2>
+                <div class="spec-card">
+                    <p class="section-paragraph">El frontend se basa en una SPA modular, altamente optimizada para carga estática y acoplada a almacenes de sincronización local:</p>
+                    <div class="fe-architecture-blocks">
+                        <div class="block-item">
+                            <strong>Vistas de Usuario</strong>
+                            <span>dashboard.html • tracker.html • calculator.html • prealert.html • packages.html • signup.html</span>
+                        </div>
+                        <div class="block-item">
+                            <strong>Lógica e Interacciones</strong>
+                            <span>dashboard.js (prealerts) • tracker.js (GPS path) • calculator.js (CIF taxes) • signup.js (OTP verification)</span>
+                        </div>
+                        <div class="block-item">
+                            <strong>Resource Center Widget</strong>
+                            <span>help-assistant.js (Predefined FAQ visual cards, interactive grids search, collision adjustments)</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 12: BACKEND ARCHITECTURE -->
+            <section id="backend" class="spec-section">
+                <h2 class="section-title">12. Arquitectura Backend & Deploy</h2>
+                <div class="spec-card">
+                    <p class="section-paragraph">Configurado para escala, alta disponibilidad y sub-100ms de respuesta mediante servicios serverless cloud:</p>
+                    <div class="be-stack-cards">
+                        <div class="stack-card">
+                            <span class="tech-icon">🌐</span>
+                            <strong>Vercel Edge</strong>
+                            <p>Hosting y distribución global estática ultrarápida.</p>
+                        </div>
+                        <div class="stack-card">
+                            <span class="tech-icon">⚡</span>
+                            <strong>Supabase APIs</strong>
+                            <p>Servicios GoTrue Auth, Storage e indexaciones.</p>
+                        </div>
+                        <div class="stack-card">
+                            <span class="tech-icon">📡</span>
+                            <strong>Websockets Realtime</strong>
+                            <p>Sincronización instantánea de fletes en ruta local.</p>
+                        </div>
+                        <div class="stack-card">
+                            <span class="tech-icon">💾</span>
+                            <strong>PostgreSQL DB</strong>
+                            <p>Servidor relacional administrado con RLS.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 13: FUTURE FEATURES -->
+            <section id="roadmap" class="spec-section">
+                <h2 class="section-title">13. Sprints Futuros & Roadmap</h2>
+                <div class="spec-card">
+                    <p class="section-paragraph">La base arquitectónica modular permite escalar en próximos sprints hacia:</p>
+                    <div class="roadmap-sprints">
+                        <div class="sprint-box">
+                            <span class="sprint-num">Sprint 1</span>
+                            <strong>Pagos SINPE & BAC Gateway</strong>
+                            <p>Pasarela automatizada para validar depósitos móviles y liberar fletes automáticamente.</p>
+                        </div>
+                        <div class="sprint-box">
+                            <span class="sprint-num">Sprint 2</span>
+                            <strong>Rutas AI de Despacho</strong>
+                            <p>Cálculo de rutas de entrega óptimas basadas en tráfico local para predecir ETAs del chofer.</p>
+                        </div>
+                        <div class="sprint-box">
+                            <span class="sprint-num">Sprint 3</span>
+                            <strong>Mobile App Híbrida</strong>
+                            <p>Aplicación nativa (iOS/Android) con escáner de códigos de barra integrado para operadores.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+    </div>
+
+    <!-- Scripts -->
+    <script src="product.js"></script>
+    <script src="cookie-consent.js"></script>
+    <!-- Smart Help Assistant -->
+    <script src="help-assistant.js"></script>
+</body>
+</html>
