@@ -69,15 +69,6 @@ export default function SignupPage() {
     setError("");
     setLoading(true);
     
-    // Generate next sequential BEZG code
-    let generatedSuite = "BEZG-001";
-    try {
-       const users = JSON.parse(localStorage.getItem("bz_supabase_db_users_list") || "[]");
-       const nextNum = users.length + 1;
-       generatedSuite = `BEZG-${String(nextNum).padStart(3, "0")}`;
-    } catch (e) {}
-    setSuiteCode(generatedSuite);
-    
     try {
       const result = await signup({
         fullName,
@@ -88,10 +79,11 @@ export default function SignupPage() {
         address,
         deliveryMethod,
         speedPreference,
-        suiteCode: generatedSuite,
         captchaToken,
       }, password);
-      
+
+      // El servidor asigna el código de casillero definitivo; lo mostramos al usuario.
+      if (result?.suiteCode) setSuiteCode(result.suiteCode);
       const needsVerification = result ? result.needsVerification : false;
       setNeedsEmailVerification(needsVerification);
       setStep(3);
@@ -110,9 +102,26 @@ export default function SignupPage() {
     }
   };
 
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text);
-    alert("Copiado al portapapeles");
+  const copyToClipboard = async (text: string) => {
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        const ok = document.execCommand("copy");
+        document.body.removeChild(ta);
+        if (!ok) throw new Error("execCommand copy failed");
+      }
+      alert("Copiado al portapapeles");
+    } catch {
+      window.prompt("Copia manualmente:", text);
+    }
   };
 
   return (

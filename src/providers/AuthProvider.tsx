@@ -43,12 +43,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               } catch (e) {}
             }
 
-            let ledgerUser: any = null;
-            try {
-              const usersList = JSON.parse(localStorage.getItem("bz_supabase_db_users_list") || "[]");
-              ledgerUser = usersList.find((u: any) => u.id === activeUser.id);
-            } catch (e) {}
-
             const realUser: User = {
               id: activeUser.id,
               email: activeUser.email || "",
@@ -61,8 +55,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               speedPreference: meta.speedPreference || "standard",
               suiteCode: meta.suiteCode || "BEZG-XX",
               createdAt: activeUser.created_at || new Date().toISOString(),
-              savedCards: ledgerUser?.savedCards || existingDbUser?.savedCards || [],
-              autoPayEnabled: ledgerUser?.autoPayEnabled ?? existingDbUser?.autoPayEnabled ?? false,
+              savedCards: existingDbUser?.savedCards || [],
+              autoPayEnabled: existingDbUser?.autoPayEnabled ?? false,
             };
             setUser(realUser);
             localStorage.setItem("bz_supabase_db_user", JSON.stringify(realUser));
@@ -121,12 +115,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               } catch (e) {}
             }
 
-            let ledgerUser: any = null;
-            try {
-              const usersList = JSON.parse(localStorage.getItem("bz_supabase_db_users_list") || "[]");
-              ledgerUser = usersList.find((u: any) => u.id === resData.user.id);
-            } catch (e) {}
-
             const realUser: User = {
               id: resData.user.id,
               email: resData.user.email || "",
@@ -139,8 +127,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               speedPreference: meta.speedPreference || "standard",
               suiteCode: meta.suiteCode || "BEZG-XX",
               createdAt: resData.user.created_at || new Date().toISOString(),
-              savedCards: ledgerUser?.savedCards || existingDbUser?.savedCards || [],
-              autoPayEnabled: ledgerUser?.autoPayEnabled ?? existingDbUser?.autoPayEnabled ?? false,
+              savedCards: existingDbUser?.savedCards || [],
+              autoPayEnabled: existingDbUser?.autoPayEnabled ?? false,
             };
 
             if (resData.session) {
@@ -155,15 +143,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
             setUser(realUser);
             localStorage.setItem("bz_supabase_db_user", JSON.stringify(realUser));
-            
-            // Sync with local users list
-            try {
-              const users = JSON.parse(localStorage.getItem("bz_supabase_db_users_list") || "[]");
-              if (!users.some((u: any) => u.email === realUser.email)) {
-                users.push(realUser);
-                localStorage.setItem("bz_supabase_db_users_list", JSON.stringify(users));
-              }
-            } catch (e) {}
             return;
           } else {
             // Sin fallback inseguro: las credenciales se validan únicamente contra Supabase.
@@ -188,14 +167,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signup = async (data: Partial<User> & { captchaToken?: string }, password?: string) => {
     setLoading(true);
     try {
-      let finalSuiteCode = data.suiteCode || "BEZG-001";
-      if (!data.suiteCode && typeof window !== "undefined") {
-        try {
-          const users = JSON.parse(localStorage.getItem("bz_supabase_db_users_list") || "[]");
-          const nextNum = users.length + 1;
-          finalSuiteCode = `BEZG-${String(nextNum).padStart(3, "0")}`;
-        } catch (e) {}
-      }
+      // El código de casillero (suite) lo asigna el servidor de forma secuencial y segura.
+      const finalSuiteCode = data.suiteCode || "";
 
       if (isRealSupabaseActive) {
         if (!password || !data.email) {
@@ -254,15 +227,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             setUser(realUser);
             localStorage.setItem("bz_supabase_db_user", JSON.stringify(realUser));
           }
-          
-          // Store copy in local users list for admin dashboard CRM visibility
-          try {
-            const users = JSON.parse(localStorage.getItem("bz_supabase_db_users_list") || "[]");
-            if (!users.some((u: any) => u.email === realUser.email)) {
-              users.push(realUser);
-              localStorage.setItem("bz_supabase_db_users_list", JSON.stringify(users));
-            }
-          } catch (e) {}
           return { needsVerification: !hasSession, suiteCode: realUser.suiteCode };
         }
         throw new Error("No se pudo registrar el usuario en Supabase.");
