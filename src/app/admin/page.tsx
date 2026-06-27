@@ -279,23 +279,18 @@ export default function IndependentAdminPage() {
         }
       }
       
-      // Fetch invoices
-      if (isRealSupabaseActive) {
-        const { data: dbInvs, error: dbInvsError } = await supabase
-          .from("invoices")
-          .select("*");
-        if (!dbInvsError && dbInvs) {
-          activeInvs = dbInvs.map((inv: any) => ({
-            id: inv.id,
-            packageId: inv.package_id,
-            fleteCost: Number(inv.flete_cost || 0),
-            taxesCost: Number(inv.taxes_cost || 0),
-            deliveryCost: Number(inv.delivery_cost || 0),
-            totalCostUsd: Number(inv.total_cost_usd || 0),
-            totalCostCrc: Number(inv.total_cost_crc || 0),
-            isPaid: inv.is_paid,
-            createdAt: inv.created_at
-          }));
+      // Fetch invoices (vía API admin con service role: el panel no tiene sesión de
+      // Supabase, así que la anon key queda bloqueada por RLS "facturas propias").
+      try {
+        const resInvs = await fetch("/api/admin/invoices", {
+          method: "GET",
+          headers: {
+            "Authorization": `Bearer ${adminPasscode}`
+          }
+        });
+        const resInvsData = await resInvs.json();
+        if (resInvs.ok && resInvsData.success) {
+          activeInvs = resInvsData.invoices;
           setInvoices(activeInvs);
         } else if (invoices.length === 0) {
           activeInvs = await mockDb.invoices.select();
@@ -303,7 +298,8 @@ export default function IndependentAdminPage() {
         } else {
           activeInvs = invoices;
         }
-      } else {
+      } catch (err) {
+        console.error("Error al obtener facturas de Supabase, cayendo en mockDb...", err);
         if (invoices.length === 0) {
           activeInvs = await mockDb.invoices.select();
           setInvoices(activeInvs);
@@ -787,26 +783,27 @@ export default function IndependentAdminPage() {
     }
   };
 
-  // Invoice Manual Payment Toggles
+  // Invoice Manual Payment Toggles (vía API admin con service role; la anon key no
+  // puede actualizar invoices porque no hay política de UPDATE bajo RLS).
   const handleToggleInvoicePayment = async (invId: string, currentPaid: boolean) => {
     try {
-      if (isRealSupabaseActive) {
-        const { error } = await supabase
-          .from("invoices")
-          .update({ is_paid: !currentPaid })
-          .eq("id", invId);
-        if (error) throw error;
-        alert(`Factura marcada como ${!currentPaid ? "PAGADA" : "PENDIENTE DE PAGO"}`);
-        fetchData();
-      } else {
-        const success = await mockDb.invoices.updatePaidStatus(invId, !currentPaid);
-        if (success) {
-          alert(`Factura marcada como ${!currentPaid ? "PAGADA" : "PENDIENTE DE PAGO"}`);
-          fetchData();
-        }
+      const adminPasscode = sessionStorage.getItem("breezego_admin_passcode") || "";
+      const res = await fetch("/api/admin/invoices", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${adminPasscode}`
+        },
+        body: JSON.stringify({ id: invId, isPaid: !currentPaid })
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || "Error al actualizar en el servidor.");
       }
-    } catch (err) {
-      alert("Error al actualizar estado de la factura.");
+      alert(`Factura marcada como ${!currentPaid ? "PAGADA" : "PENDIENTE DE PAGO"}`);
+      fetchData();
+    } catch (err: any) {
+      alert("Error al actualizar estado de la factura: " + (err?.message || ""));
     }
   };
 
