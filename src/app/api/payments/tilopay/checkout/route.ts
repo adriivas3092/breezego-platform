@@ -84,42 +84,47 @@ export async function POST(request: Request) {
       metadata: { invoiceId, amountUsd, txId },
     });
 
-    // 7. Cobro real vía Tilopay
-    if (isTilopayConfigured()) {
-      const tlToken = await tilopayLogin();
-      if (tlToken) {
-        const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://breezego.net";
-        const result = await tilopayProcessPayment({
-          token: tlToken,
-          amount: amountUsd,
-          currency: "USD",
-          orderNumber: txId,
-          redirect: `${siteUrl}/payments/tilopay-return`,
-          billing: {
-            firstName: (profile?.full_name || "Cliente").replace(/^BEZG\s+/i, "").trim() || "Cliente",
-            lastName: profile?.last_name || "BreezeGo",
-            address: profile?.address || "San Jose",
-            city: "San Jose",
-            state: "SJ",
-            zip: "10101",
-            country: "CR",
-            phone: profile?.phone || "00000000",
-            email: billingEmail,
-          },
-        });
-
-        if ("url" in result) {
-          logger.info("URL de pago Tilopay generada", { ip, userId, context: "payment-checkout-tilopay", metadata: { txId, invoiceId } });
-          return NextResponse.json({ success: true, redirectUrl: result.url, sandbox: false });
-        }
-        logger.error("Tilopay processPayment falló, usando sandbox", null, { txId, invoiceId, metadata: { error: result.error } });
-      } else {
-        logger.error("No se pudo autenticar con Tilopay, usando sandbox", null, { txId, invoiceId });
-      }
+    // 7. Cobro real vía Tilopay (OBLIGATORIO: sin fallback simulado en producción.
+    //    Antes caía a una página sandbox que firmaba un webhook con un secreto
+    //    hardcodeado; eso se eliminó para evitar cualquier ruta de "pago" sin cobro real.)
+    if (!isTilopayConfigured()) {
+      logger.error("Tilopay no está configurado: no se puede iniciar el cobro", null, { txId, invoiceId });
+      return NextResponse.json({ success: false, error: "El sistema de pagos no está disponible temporalmente. Intenta más tarde." }, { status: 503 });
     }
 
-    // 8. Fallback: simulador sandbox (cuando Tilopay no está configurado o falla)
-    return NextResponse.json({ success: true, redirectUrl: `/payments/tilopay-sandbox?orderId=${txId}`, sandbox: true });
+    const tlToken = await tilopayLogin();
+    if (!tlToken) {
+      logger.error("No se pudo autenticar con Tilopay", null, { txId, invoiceId });
+      return NextResponse.json({ success: false, error: "No se pudo conectar con la pasarela de pago. Intenta de nuevo en unos minutos." }, { status: 502 });
+    }
+
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://breezego.net";
+    const result = await tilopayProcessPayment({
+      token: tlToken,
+      amount: amountUsd,
+      currency: "USD",
+      orderNumber: txId,
+      redirect: `${siteUrl}/payments/tilopay-return`,
+      billing: {
+        firstName: (profile?.full_name || "Cliente").replace(/^BEZG\s+/i, "").trim() || "Cliente",
+        lastName: profile?.last_name || "BreezeGo",
+        address: profile?.address || "San Jose",
+        city: "San Jose",
+        state: "SJ",
+        zip: "10101",
+        country: "CR",
+        phone: profile?.phone || "00000000",
+        email: billingEmail,
+      },
+    });
+
+    if (!("url" in result)) {
+      logger.error("Tilopay processPayment falló", null, { txId, invoiceId, metadata: { error: result.error } });
+      return NextResponse.json({ success: false, error: "No se pudo iniciar el pago. Intenta de nuevo." }, { status: 502 });
+    }
+
+    logger.info("URL de pago Tilopay generada", { ip, userId, context: "payment-checkout-tilopay", metadata: { txId, invoiceId } });
+    return NextResponse.json({ success: true, redirectUrl: result.url, sandbox: false });
 
   } catch (error) {
     logger.error("Error crítico en checkout de pagos", error, { ip, userAgent });
