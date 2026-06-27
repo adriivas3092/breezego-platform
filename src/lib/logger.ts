@@ -19,6 +19,8 @@ interface LogPayload {
     message: string;
     stack?: string;
     code?: string;
+    details?: string;
+    hint?: string;
   };
 }
 
@@ -40,6 +42,8 @@ class StructuredLogger {
         message: options.error.message,
         stack: options.error.stack,
         code: (options.error as any).code || undefined,
+        details: (options.error as any).details || undefined,
+        hint: (options.error as any).hint || undefined,
       };
     }
 
@@ -69,8 +73,30 @@ class StructuredLogger {
   error(message: string, err?: any, options: Partial<Omit<LogPayload, 'timestamp' | 'level' | 'message'>> = {}) {
     this.log('ERROR', message, {
       ...options,
-      error: err instanceof Error ? err : err ? { message: String(err) } : undefined,
+      error: this.normalizeError(err),
     });
+  }
+
+  /**
+   * Normaliza cualquier valor de error a { message, stack, code, details, hint }.
+   * Importante: los errores de Supabase/PostgREST son objetos planos (no Error),
+   * así que String(err) daría "[object Object]" y se perdería la causa real.
+   */
+  private normalizeError(err: any): LogPayload['error'] | undefined {
+    if (!err) return undefined;
+    if (err instanceof Error) {
+      return { message: err.message, stack: err.stack, code: (err as any).code };
+    }
+    if (typeof err === 'object') {
+      const msg = err.message || err.error_description || err.error || err.msg;
+      return {
+        message: typeof msg === 'string' && msg ? msg : JSON.stringify(err),
+        code: err.code,
+        details: err.details,
+        hint: err.hint,
+      };
+    }
+    return { message: String(err) };
   }
 
   debug(message: string, options: Partial<Omit<LogPayload, 'timestamp' | 'level' | 'message'>> = {}) {
