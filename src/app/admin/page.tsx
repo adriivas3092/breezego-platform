@@ -1772,17 +1772,30 @@ export default function IndependentAdminPage() {
                                 </span>
                               </td>
                               <td className="px-5 py-3.5 text-right">
-                                <button 
-                                  className={`px-2 py-1 rounded text-[9.5px] font-bold transition-all ${
-                                    isSelected ? "bg-brand-orange text-white" : "bg-slate-100 hover:bg-slate-200 text-slate-600"
-                                  }`}
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleSelectPackage(pkg);
-                                  }}
-                                >
-                                  Operar
-                                </button>
+                                <div className="flex items-center justify-end gap-1.5">
+                                  <button
+                                    className="px-2 py-1 rounded text-[9.5px] font-bold transition-all bg-slate-100 hover:bg-brand-cyan/15 text-slate-600 hover:text-brand-teal"
+                                    title="Generar documento del paquete (PDF para reclamos)"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      const pc = sessionStorage.getItem("breezego_admin_passcode") || "";
+                                      window.open(`/api/packages/${pkg.id}/document?passcode=${encodeURIComponent(pc)}`, "_blank");
+                                    }}
+                                  >
+                                    Doc
+                                  </button>
+                                  <button
+                                    className={`px-2 py-1 rounded text-[9.5px] font-bold transition-all ${
+                                      isSelected ? "bg-brand-orange text-white" : "bg-slate-100 hover:bg-slate-200 text-slate-600"
+                                    }`}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleSelectPackage(pkg);
+                                    }}
+                                  >
+                                    Operar
+                                  </button>
+                                </div>
                               </td>
                             </tr>
                           );

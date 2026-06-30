@@ -196,6 +196,126 @@ export function generateInvoicePdf(invoice: any, pkg: any, client: any): Promise
 }
 
 /**
+ * Genera un "Comprobante de Paquete" PDF con TODA la información del paquete
+ * (datos del cliente, logística, fechas de cada etapa, transportista y, si existe,
+ * el desglose de costos). Pensado como documento oficial para eventuales reclamos.
+ */
+export function generatePackageDocumentPdf(pkg: any, client: any, invoice?: any): Promise<Buffer> {
+  return new Promise((resolve, reject) => {
+    try {
+      const doc = new PDFDocument({ margin: 50, size: "LETTER" });
+      const chunks: Buffer[] = [];
+      doc.on("data", (chunk) => chunks.push(chunk));
+      doc.on("end", () => resolve(Buffer.concat(chunks)));
+      doc.on("error", (err) => reject(err));
+
+      const fmtDate = (d?: string | null) =>
+        d ? new Date(d).toLocaleString("es-CR", { year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }) : "Pendiente";
+
+      const statusLabels: Record<string, string> = {
+        prealerted: "Prealertado",
+        received: "Recibido en Miami",
+        in_transit: "En tránsito internacional",
+        customs: "En aduanas (SJO)",
+        out_for_delivery: "En reparto local",
+        delivered: "Entregado",
+      };
+
+      const modeLabel =
+        pkg.shipping_mode === "sea" ? "Marítimo (Miami → SJO)"
+        : pkg.shipping_mode === "air_colombia" ? "Aéreo (Colombia → SJO)"
+        : "Aéreo (Miami → SJO)";
+
+      // ── Header
+      doc.fillColor("#0b0f19").rect(0, 0, doc.page.width, 100).fill();
+      doc.fillColor("#00f2fe").fontSize(22).font("Helvetica-Bold").text("BreezeGo", 50, 35);
+      doc.fillColor("#ffffff").fontSize(8).font("Helvetica").text("Plataforma SaaS de Casillero & Logística Miami", 50, 62);
+
+      doc.fillColor("#ffffff").fontSize(11).font("Helvetica-Bold").text("COMPROBANTE DE PAQUETE", 360, 32, { align: "right" });
+      doc.font("Helvetica").fontSize(8).text(`Doc. #${String(pkg.id).substring(0, 8).toUpperCase()}`, 360, 50, { align: "right" });
+      doc.text(`Emitido: ${new Date().toLocaleDateString("es-CR")}`, 360, 62, { align: "right" });
+      doc.fillColor("#00f2fe").font("Helvetica-Bold").fontSize(9).text(statusLabels[pkg.status] || pkg.status, 360, 74, { align: "right" });
+
+      // ── Cliente
+      doc.fillColor("#0f172a").fontSize(12).font("Helvetica-Bold").text("DATOS DEL CLIENTE", 50, 125);
+      doc.strokeColor("#cbd5e1").lineWidth(1).moveTo(50, 140).lineTo(562, 140).stroke();
+      doc.fillColor("#334155").fontSize(9).font("Helvetica");
+      doc.text(`Nombre: ${client?.fullName || "Cliente BreezeGo"}`, 50, 152);
+      doc.text(`Email: ${client?.email || "N/D"}`, 50, 166);
+      doc.text(`Teléfono: ${client?.phone || "N/D"}`, 50, 180);
+      doc.text(`Casillero (Suite): ${client?.suiteCode || "N/D"}`, 320, 152);
+      doc.text(`Identificación: ${client?.idCard || "N/D"}`, 320, 166);
+      doc.text(`Dirección: ${client?.address || "N/D"}`, 320, 180, { width: 240 });
+
+      // ── Detalle del paquete
+      doc.fillColor("#0f172a").fontSize(12).font("Helvetica-Bold").text("DETALLE DEL PAQUETE", 50, 215);
+      doc.strokeColor("#cbd5e1").moveTo(50, 230).lineTo(562, 230).stroke();
+      doc.fillColor("#334155").fontSize(9).font("Helvetica");
+      const weightLine = pkg.shipping_mode === "sea"
+        ? `Volumen: ${pkg.weight} CFT`
+        : `Peso: ${pkg.weight} Kg (${(Number(pkg.weight || 0) * 2.20462).toFixed(2)} Lbs)`;
+      doc.text(`Tracking: ${pkg.tracking_number}`, 50, 242);
+      doc.text(`Tienda / Remitente: ${pkg.vendor || "N/D"}`, 50, 256);
+      doc.text(`Descripción: ${pkg.description || "N/D"}`, 50, 270, { width: 250 });
+      doc.text(`Categoría: ${(pkg.category || "general").toUpperCase()}`, 50, 298);
+      doc.text(`Modalidad: ${modeLabel}`, 320, 242);
+      doc.text(`Valor declarado: $${Number(pkg.declared_value || 0).toFixed(2)}`, 320, 256);
+      doc.text(weightLine, 320, 270);
+      doc.text(`Seguro: ${pkg.wants_insurance === false ? "No" : "Sí (2%)"}`, 320, 284);
+      doc.text(`Entrega a domicilio: ${pkg.wants_delivery === false ? "No (retiro en locker)" : "Sí"}`, 320, 298);
+
+      // ── Trazabilidad / fechas
+      doc.fillColor("#0f172a").fontSize(12).font("Helvetica-Bold").text("TRAZABILIDAD", 50, 330);
+      doc.strokeColor("#cbd5e1").moveTo(50, 345).lineTo(562, 345).stroke();
+      doc.fillColor("#334155").fontSize(9).font("Helvetica");
+      doc.text(`Prealerta / registro: ${fmtDate(pkg.created_at)}`, 50, 357);
+      doc.text(`Recibido en Miami: ${fmtDate(pkg.miami_received_at)}`, 50, 371);
+      doc.text(`Arribo a Costa Rica (SJO): ${fmtDate(pkg.sjo_arrived_at)}`, 320, 357);
+      doc.text(`Entregado: ${fmtDate(pkg.delivered_at)}`, 320, 371);
+
+      if (pkg.driver_name || pkg.driver_plate || pkg.driver_phone) {
+        doc.text(`Transportista: ${pkg.driver_name || "N/D"} · Placa: ${pkg.driver_plate || "N/D"} · Tel: ${pkg.driver_phone || "N/D"}`, 50, 385, { width: 512 });
+      }
+
+      // ── Costos (si hay factura asociada)
+      let y = 410;
+      if (invoice) {
+        doc.fillColor("#0f172a").fontSize(12).font("Helvetica-Bold").text("DESGLOSE DE COSTOS", 50, y);
+        doc.strokeColor("#cbd5e1").moveTo(50, y + 15).lineTo(562, y + 15).stroke();
+        y += 27;
+        const rows = [
+          ["Flete internacional & seguro", `$${Number(invoice.flete_cost || 0).toFixed(2)}`],
+          ["Impuestos de importación (SJO)", `$${Number(invoice.taxes_cost || 0).toFixed(2)}`],
+          ["Servicio de distribución local", `$${Number(invoice.delivery_cost || 0).toFixed(2)}`],
+        ];
+        doc.fontSize(9).font("Helvetica").fillColor("#334155");
+        rows.forEach(([label, val]) => {
+          doc.text(label, 60, y);
+          doc.font("Helvetica-Bold").text(val, 460, y, { align: "right" });
+          doc.font("Helvetica");
+          y += 18;
+        });
+        doc.fillColor("#0f172a").font("Helvetica-Bold");
+        doc.text("TOTAL (USD):", 330, y + 4);
+        doc.text(`$${Number(invoice.total_cost_usd || 0).toFixed(2)}`, 460, y + 4, { align: "right" });
+        doc.fillColor(invoice.is_paid ? "#059669" : "#ea580c");
+        doc.text(`Estado de pago: ${invoice.is_paid ? "PAGADA" : "PENDIENTE"}`, 60, y + 4);
+        y += 26;
+      }
+
+      // ── Nota legal para reclamos
+      doc.fillColor("#64748b").fontSize(8).font("Helvetica");
+      doc.text("Documento oficial emitido por BreezeGo Costa Rica S.A. como comprobante del paquete arriba descrito.", 50, 700, { align: "center", width: 512 });
+      doc.text("Válido como respaldo para gestiones, seguimiento y eventuales reclamos ante la empresa y/o el transportista.", 50, 712, { align: "center", width: 512 });
+
+      doc.end();
+    } catch (err) {
+      reject(err);
+    }
+  });
+}
+
+/**
  * Sends the invoice email to the client with the PDF attached.
  */
 export async function sendInvoiceEmail(
