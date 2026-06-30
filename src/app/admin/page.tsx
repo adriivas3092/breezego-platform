@@ -1837,14 +1837,17 @@ export default function IndependentAdminPage() {
                               <span className="text-[9px] text-emerald-600 block uppercase font-extrabold tracking-wider">Factura Adjunta</span>
                               <span className="text-[10px] text-slate-650 block leading-tight font-medium">El cliente adjuntó una factura comercial.</span>
                             </div>
-                            <a
-                              href={selectedPkg.invoiceUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                const pc = sessionStorage.getItem("breezego_admin_passcode") || "";
+                                window.open(`/api/packages/${selectedPkg.id}/invoice-file?passcode=${encodeURIComponent(pc)}`, "_blank");
+                              }}
                               className="px-3 py-1.5 bg-emerald-650 hover:bg-emerald-700 text-white rounded-lg text-[9px] font-bold transition-all uppercase tracking-wider whitespace-nowrap"
                             >
                               Ver Factura
-                            </a>
+                            </button>
                           </div>
                         )}
 

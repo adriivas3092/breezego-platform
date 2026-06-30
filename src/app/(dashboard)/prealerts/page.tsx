@@ -125,10 +125,9 @@ export default function PrealertsPage() {
               console.error("Error al subir archivo a Supabase Storage:", uploadError);
               // Si el bucket falla (por RLS o falta de configuración), se notifica pero no se bloquea la prealerta
             } else {
-              const { data: { publicUrl } } = supabase.storage
-                .from("invoices")
-                .getPublicUrl(filePath);
-              uploadedInvoiceUrl = publicUrl;
+              // Bucket privado: guardamos la RUTA del archivo. El acceso se hace luego
+              // mediante un enlace firmado temporal vía /api/packages/[id]/invoice-file.
+              uploadedInvoiceUrl = filePath;
             }
           } catch (storageErr) {
             console.error("Excepción en Supabase Storage:", storageErr);

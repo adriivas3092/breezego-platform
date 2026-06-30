@@ -6,7 +6,7 @@ import { useAuth } from "@/providers/AuthProvider";
 import { mockDb } from "@/lib/supabase";
 import { supabase, isRealSupabaseActive } from "@/lib/supabaseClient";
 import { Package, Invoice, TilopayTransaction } from "@/types";
-import { Copy, Plus, Compass, Scale, ShieldCheck, CreditCard, ArrowRight, Bell, HelpCircle, Loader2, Trash2, LogOut, MapPin, Truck, Plane, Ship, Check, Activity, ChevronRight, FileText } from "lucide-react";
+import { Copy, Plus, Compass, Scale, ShieldCheck, CreditCard, ArrowRight, Bell, HelpCircle, Loader2, Trash2, LogOut, MapPin, Truck, Plane, Ship, Check, Activity, ChevronRight, FileText, Paperclip } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 
@@ -252,6 +252,7 @@ export default function DashboardPage() {
               sjoArrivedAt: p.sjo_arrived_at,
               deliveredAt: p.delivered_at,
               createdAt: p.created_at,
+              invoiceUrl: p.invoice_url || "",
             }));
           }
         }
@@ -987,6 +988,18 @@ export default function DashboardPage() {
                         <div className="flex items-center gap-1">
                           {selectedPackageId === pkg.id && (
                             <span className="h-1.5 w-1.5 rounded-full bg-brand-cyan animate-pulse"></span>
+                          )}
+                          {pkg.invoiceUrl && (
+                            <Link
+                              href={`/api/packages/${pkg.id}/invoice-file`}
+                              target="_blank"
+                              onClick={(e) => e.stopPropagation()}
+                              title="Ver la factura comercial que adjuntaste"
+                            >
+                              <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-brand-orange hover:bg-white/5 rounded-lg">
+                                <Paperclip className="h-4 w-4" />
+                              </Button>
+                            </Link>
                           )}
                           <Link
                             href={`/api/packages/${pkg.id}/document`}
