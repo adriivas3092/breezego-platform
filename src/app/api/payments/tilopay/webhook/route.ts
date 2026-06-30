@@ -4,7 +4,7 @@ import { z } from "zod";
 import { TilopayTransactionStatus } from "@/types";
 import { sanitize } from "@/lib/sanitize";
 import { logger } from "@/lib/logger";
-import { getPaymentByOrder, updatePaymentByOrder, markInvoicePaid } from "@/lib/paymentsDb";
+import { getPaymentByOrder, updatePaymentByOrder, markInvoicePaid, sendPaymentReceiptForInvoice } from "@/lib/paymentsDb";
 
 const webhookSchema = z.object({
   orderNumber: z.string().min(1, "orderNumber es obligatorio."),
@@ -76,8 +76,12 @@ export async function POST(request: Request) {
     });
 
     if (finalStatus === "paid" && payment.invoice_id) {
-      const ok = await markInvoicePaid(payment.invoice_id);
-      if (!ok) logger.error("Error al marcar factura como pagada desde webhook", null, { invoiceId: payment.invoice_id });
+      // Devuelve true solo si esta llamada hizo la transición pendiente -> pagada.
+      const justPaid = await markInvoicePaid(payment.invoice_id);
+      if (justPaid) {
+        // Comprobante de pago al cliente (idempotente: confirm y webhook no duplican).
+        await sendPaymentReceiptForInvoice(payment.invoice_id, transactionId);
+      }
     }
 
     logger.info("Webhook de pago procesado", {

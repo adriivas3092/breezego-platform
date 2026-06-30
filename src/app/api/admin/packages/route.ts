@@ -302,32 +302,34 @@ export async function POST(req: Request) {
           .single();
 
         if (!invError && newInvoice && (!existingInvoice || (status === "received" && existingInvoice.flete_cost === 0))) {
-          // Generar PDF y enviar correo en segundo plano
-          (async () => {
-            try {
-              const pdfBuffer = await generateInvoicePdf(newInvoice, data, {
-                fullName: profile?.full_name || "Cliente BreezeGo",
-                email: profile?.email,
-                phone: profile?.phone,
-                address: profile?.address,
-                suiteCode: profile?.suite_code
-              });
-              const pdfFilename = `BreezeGo_Factura_${newInvoice.id.substring(0, 8).toUpperCase()}.pdf`;
-              
-              if (profile?.email) {
-                await sendInvoiceEmail(
-                  profile.email,
-                  profile.full_name || "Cliente",
-                  newInvoice,
-                  pdfBuffer,
-                  pdfFilename,
-                  data
-                );
-              }
-            } catch (mailErr) {
-              logger.error("Error al generar o enviar correo de factura", mailErr);
+          // IMPORTANTE: en Vercel serverless la lambda se congela al devolver la respuesta,
+          // por lo que un envío "fire-and-forget" (sin await) puede no completarse nunca.
+          // Por eso esperamos el envío del correo antes de responder.
+          try {
+            const pdfBuffer = await generateInvoicePdf(newInvoice, data, {
+              fullName: profile?.full_name || "Cliente BreezeGo",
+              email: profile?.email,
+              phone: profile?.phone,
+              address: profile?.address,
+              suiteCode: profile?.suite_code
+            });
+            const pdfFilename = `BreezeGo_Factura_${newInvoice.id.substring(0, 8).toUpperCase()}.pdf`;
+
+            if (profile?.email) {
+              await sendInvoiceEmail(
+                profile.email,
+                profile.full_name || "Cliente",
+                newInvoice,
+                pdfBuffer,
+                pdfFilename,
+                data
+              );
+            } else {
+              logger.warn("Factura generada sin email de cliente: correo omitido", { metadata: { invoiceId: newInvoice.id, userId: data.user_id } });
             }
-          })();
+          } catch (mailErr) {
+            logger.error("Error al generar o enviar correo de factura", mailErr);
+          }
         }
       } catch (billingErr) {
         logger.error("Error en el flujo de facturación automatizada", billingErr);

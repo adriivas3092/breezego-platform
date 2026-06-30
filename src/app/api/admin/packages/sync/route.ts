@@ -73,32 +73,32 @@ async function processInvoiceForPackage(
       .single();
 
     if (!invError && newInvoice && (!existingInvoice || (status === "received" && existingInvoice.flete_cost === 0))) {
-      // Generar PDF y enviar correo en segundo plano
-      (async () => {
-        try {
-          const pdfBuffer = await generateInvoicePdf(newInvoice, packageObj, {
-            fullName: profile?.full_name || "Cliente BreezeGo",
-            email: profile?.email,
-            phone: profile?.phone,
-            address: profile?.address,
-            suiteCode: profile?.suite_code
-          });
-          const pdfFilename = `BreezeGo_Factura_${newInvoice.id.substring(0, 8).toUpperCase()}.pdf`;
-          
-          if (profile?.email) {
-            await sendInvoiceEmail(
-              profile.email,
-              profile.full_name || "Cliente",
-              newInvoice,
-              pdfBuffer,
-              pdfFilename,
-              packageObj
-            );
-          }
-        } catch (mailErr) {
-          logger.error("Error al generar PDF o enviar correo en segundo plano desde Sync helper", mailErr);
+      // Esperamos el envío (sin await el correo no se completa en serverless).
+      try {
+        const pdfBuffer = await generateInvoicePdf(newInvoice, packageObj, {
+          fullName: profile?.full_name || "Cliente BreezeGo",
+          email: profile?.email,
+          phone: profile?.phone,
+          address: profile?.address,
+          suiteCode: profile?.suite_code
+        });
+        const pdfFilename = `BreezeGo_Factura_${newInvoice.id.substring(0, 8).toUpperCase()}.pdf`;
+
+        if (profile?.email) {
+          await sendInvoiceEmail(
+            profile.email,
+            profile.full_name || "Cliente",
+            newInvoice,
+            pdfBuffer,
+            pdfFilename,
+            packageObj
+          );
+        } else {
+          logger.warn("Sync: factura generada sin email de cliente: correo omitido", { metadata: { invoiceId: newInvoice.id, packageId: packageObj.id } });
         }
-      })();
+      } catch (mailErr) {
+        logger.error("Error al generar PDF o enviar correo desde Sync helper", mailErr);
+      }
     }
   } catch (err) {
     logger.error("Error procesando factura para el paquete en Sync", err, { metadata: { packageId: packageObj.id } });

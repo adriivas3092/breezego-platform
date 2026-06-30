@@ -389,3 +389,189 @@ export async function sendInvoiceEmail(
     return false;
   }
 }
+
+/**
+ * Sends the PAID receipt email to the client after a successful Tilopay payment.
+ * Attaches the same invoice PDF (which now renders the "PAGADA" status).
+ */
+export async function sendPaymentReceiptEmail(
+  toEmail: string,
+  clientName: string,
+  invoice: any,
+  pdfBuffer: Buffer,
+  pdfFilename: string,
+  pkg?: any,
+  transactionId?: string
+): Promise<boolean> {
+  const host = process.env.SMTP_HOST;
+  const port = Number(process.env.SMTP_PORT || 465);
+  const user = process.env.SMTP_USER;
+  const pass = process.env.SMTP_PASS;
+  const from = process.env.SMTP_FROM || `"BreezeGo Logística" <noreply@breezego.net>`;
+
+  if (!host || !user || !pass) {
+    logger.warn("SMTP credentials not fully configured. Payment receipt email skipped but PDF was generated.", {
+      metadata: { toEmail, invoiceId: invoice.id }
+    });
+    return false;
+  }
+
+  try {
+    const transporter = nodemailer.createTransport({
+      host,
+      port,
+      secure: port === 465,
+      auth: { user, pass }
+    });
+
+    const paidDate = invoice.paid_at || new Date().toISOString();
+
+    const mailOptions = {
+      from,
+      to: toEmail,
+      subject: `✅ Pago Confirmado - Comprobante #${invoice.id.substring(0, 8).toUpperCase()} - BreezeGo`,
+      html: `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8">
+          <title>Comprobante de Pago - BreezeGo</title>
+          <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+        </head>
+        <body style="font-family: 'Inter', 'Segoe UI', Helvetica, Arial, sans-serif; background-color: #f1f5f9; margin: 0; padding: 0; color: #334155; -webkit-font-smoothing: antialiased;">
+          <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #f1f5f9; padding: 30px 0;">
+            <tr>
+              <td align="center">
+                <table width="600" border="0" cellspacing="0" cellpadding="0" style="background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.05); border: 1px solid #e2e8f0;">
+
+                  <!-- Dark Header -->
+                  <tr>
+                    <td style="padding: 24px 40px; text-align: center; background-color: #0b0f19; border-bottom: 2px solid #00ff88;">
+                      <img src="https://breezego.net/logo.png" alt="BreezeGo" style="height: 35px; width: auto; display: inline-block;" />
+                      <p style="font-family: 'Montserrat', sans-serif; font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: #00ff88; margin: 6px 0 0 0;">— TUS PAQUETES EN MOVIMIENTO —</p>
+                    </td>
+                  </tr>
+
+                  <!-- Main Content Area -->
+                  <tr>
+                    <td style="padding: 35px 40px; background-color: #ffffff;">
+
+                      <!-- Success Badge -->
+                      <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-bottom: 20px;">
+                        <tr>
+                          <td align="center">
+                            <span style="background-color: rgba(0, 255, 136, 0.12); color: #059669; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; padding: 8px 18px; border-radius: 999px; display: inline-block;">
+                              ✓ Pago Confirmado
+                            </span>
+                          </td>
+                        </tr>
+                      </table>
+
+                      <h2 style="font-family: 'Montserrat', sans-serif; color: #0b0f19; font-size: 18px; font-weight: 800; margin-top: 0; margin-bottom: 12px; letter-spacing: -0.5px; text-align: center;">¡Gracias por tu pago, ${clientName}!</h2>
+                      <p style="font-size: 13px; line-height: 1.5; color: #475569; margin-bottom: 24px; margin-top: 0; text-align: center;">
+                        Hemos recibido tu pago correctamente. Tu paquete ya está autorizado para su procesamiento y entrega. Este es tu comprobante oficial:
+                      </p>
+
+                      <!-- Receipt Card -->
+                      <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #f8fafc; border: 2px solid #00ff88; border-radius: 12px; margin-bottom: 24px; border-collapse: separate;">
+                        <tr>
+                          <td style="padding: 20px;">
+
+                            <table width="100%" border="0" cellspacing="0" cellpadding="0" style="border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 15px;">
+                              <tr>
+                                <td valign="middle">
+                                  <strong style="font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 800; color: #0b0f19; text-transform: uppercase; letter-spacing: 0.5px; display: block; line-height: 1.1;">BreezeGo Finance</strong>
+                                  <span style="font-size: 8px; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; display: block; margin-top: 2px;">COMPROBANTE: #${invoice.id.substring(0, 8).toUpperCase()}</span>
+                                </td>
+                                <td align="right" valign="middle">
+                                  <span style="background-color: #00ff88; color: #064e3b; font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; padding: 4px 10px; border-radius: 6px; display: inline-block;">
+                                    Pagada
+                                  </span>
+                                </td>
+                              </tr>
+                            </table>
+
+                            <table width="100%" border="0" cellspacing="0" cellpadding="0" style="font-size: 12px; border-collapse: collapse; color: #334155; margin-bottom: 15px;">
+                              <tbody>
+                                <tr style="border-bottom: 1px solid #e2e8f0;">
+                                  <td style="padding: 8px 12px; color: #64748b;">Fecha de pago</td>
+                                  <td align="right" style="padding: 8px 12px; font-weight: 600; color: #0b0f19;">${new Date(paidDate).toLocaleDateString("es-CR", { year: "numeric", month: "long", day: "numeric" })}</td>
+                                </tr>
+                                ${transactionId ? `<tr style="border-bottom: 1px solid #e2e8f0;">
+                                  <td style="padding: 8px 12px; color: #64748b;">Referencia de transacción</td>
+                                  <td align="right" style="padding: 8px 12px; font-weight: 600; color: #0b0f19;">${transactionId}</td>
+                                </tr>` : ""}
+                                ${pkg?.tracking_number ? `<tr style="border-bottom: 1px solid #e2e8f0;">
+                                  <td style="padding: 8px 12px; color: #64748b;">Tracking</td>
+                                  <td align="right" style="padding: 8px 12px; font-weight: 600; color: #0b0f19;">${pkg.tracking_number}</td>
+                                </tr>` : ""}
+                                <tr style="background-color: rgba(0, 255, 136, 0.10); font-weight: bold; font-family: 'Montserrat', sans-serif;">
+                                  <td style="padding: 12px; border-radius: 6px 0 0 6px; font-size: 11px; text-transform: uppercase; color: #0b0f19;">Total Pagado (USD)</td>
+                                  <td align="right" style="padding: 12px; border-radius: 0 6px 6px 0; font-size: 15px; color: #059669;">$${invoice.total_cost_usd.toFixed(2)}</td>
+                                </tr>
+                                <tr style="background-color: #f1f5f9; font-weight: bold; color: #0b0f19;">
+                                  <td style="padding: 10px 12px; border-radius: 6px 0 0 6px; font-size: 11px; text-transform: uppercase;">Equivalente en Colones (CRC)</td>
+                                  <td align="right" style="padding: 10px 12px; border-radius: 0 6px 6px 0; font-size: 13px;">₡${invoice.total_cost_crc.toLocaleString("es-CR")}</td>
+                                </tr>
+                              </tbody>
+                            </table>
+
+                          </td>
+                        </tr>
+                      </table>
+
+                      <p style="font-size: 13px; line-height: 1.5; color: #475569; margin-bottom: 24px; margin-top: 0; text-align: center;">
+                        Adjunto encontrarás el comprobante oficial en formato PDF para tus registros. Puedes seguir el estado de tu envío en tu Command Center:
+                      </p>
+
+                      <!-- CTA Button -->
+                      <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-top: 25px; margin-bottom: 25px;">
+                        <tr>
+                          <td align="center">
+                            <a href="${process.env.NEXT_PUBLIC_SITE_URL || 'https://breezego.net'}/dashboard" target="_blank" style="background-color: #0b0f19; color: #ffffff; text-decoration: none; font-family: 'Montserrat', sans-serif; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; padding: 14px 30px; border-radius: 10px; display: inline-block;">
+                              Ver mi Command Center
+                            </a>
+                          </td>
+                        </tr>
+                      </table>
+
+                      <p style="font-size: 11px; color: #94a3b8; text-align: center; margin-top: 25px; margin-bottom: 0; line-height: 1.4;">
+                        ¿Dudas sobre tu envío? Responde a este correo o escríbenos por WhatsApp.
+                      </p>
+                    </td>
+                  </tr>
+
+                  <!-- Dark Footer -->
+                  <tr>
+                    <td style="padding: 24px 40px; background-color: #0b0f19; text-align: center; color: #64748b; font-size: 10px; border-top: 1px solid rgba(255, 255, 255, 0.05);">
+                      <p style="margin: 0 0 6px 0; color: #cbd5e1;">© ${new Date().getFullYear()} BreezeGo S.A. Todos los derechos reservados.</p>
+                      <p style="margin: 0; color: #64748b;">San José, Costa Rica • Miami Hub (Florida) • Doral USA</p>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </body>
+        </html>
+      `,
+      attachments: [
+        {
+          filename: pdfFilename,
+          content: pdfBuffer
+        }
+      ]
+    };
+
+    await transporter.sendMail(mailOptions);
+    logger.info("Comprobante de pago enviado con éxito", {
+      metadata: { toEmail, invoiceId: invoice.id }
+    });
+    return true;
+  } catch (error) {
+    logger.error("Error al enviar el comprobante de pago", error, {
+      metadata: { toEmail, invoiceId: invoice.id }
+    });
+    return false;
+  }
+}

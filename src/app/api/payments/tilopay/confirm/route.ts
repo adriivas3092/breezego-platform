@@ -3,7 +3,7 @@ import { z } from "zod";
 import { sanitize } from "@/lib/sanitize";
 import { logger } from "@/lib/logger";
 import { verifyTilopayOrderHash, computeTilopayOrderHash } from "@/lib/tilopay";
-import { getPaymentByOrder, updatePaymentByOrder, markInvoicePaid } from "@/lib/paymentsDb";
+import { getPaymentByOrder, updatePaymentByOrder, markInvoicePaid, sendPaymentReceiptForInvoice } from "@/lib/paymentsDb";
 
 // Parámetros que Tilopay agrega a la URL de retorno tras un pago hosted.
 const confirmSchema = z.object({
@@ -81,8 +81,12 @@ export async function POST(request: Request) {
     });
 
     if (approved && payment.invoice_id) {
-      const ok = await markInvoicePaid(payment.invoice_id);
-      if (!ok) logger.error("Confirm: error al marcar factura pagada", null, { metadata: { invoiceId: payment.invoice_id } });
+      // Devuelve true solo si esta llamada hizo la transición pendiente -> pagada.
+      const justPaid = await markInvoicePaid(payment.invoice_id);
+      if (justPaid) {
+        // Comprobante de pago al cliente (idempotente: solo en la primera transición).
+        await sendPaymentReceiptForInvoice(payment.invoice_id, tpt);
+      }
     }
 
     logger.info("Confirm: pago procesado", {

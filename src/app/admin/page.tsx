@@ -872,11 +872,14 @@ export default function IndependentAdminPage() {
         token = session?.access_token || "";
       } catch (e) {}
 
+      const adminPasscode = sessionStorage.getItem("breezego_admin_passcode") || "";
+
       const response = await fetch("/api/payments/tilopay/checkout", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+          "Authorization": `Bearer ${token}`,
+          "x-admin-passcode": adminPasscode
         },
         body: JSON.stringify({
           invoiceId: invId,
