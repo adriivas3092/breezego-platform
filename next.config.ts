@@ -7,6 +7,14 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  // pdfkit lee sus métricas de fuente (.afm) en runtime con fs.readFileSync.
+  // Si webpack lo empaqueta, esos archivos no quedan en la función serverless y
+  // falla con "ENOENT ... Helvetica.afm". Lo marcamos como externo (se carga de
+  // node_modules) y forzamos a incluir los .afm en el bundle de las rutas API.
+  serverExternalPackages: ["pdfkit"],
+  outputFileTracingIncludes: {
+    "/api/**": ["./node_modules/pdfkit/js/data/*.afm"],
+  },
   async redirects() {
     return [
       {
